@@ -1,0 +1,9 @@
+.dropdown-item:hover, .dropdown-item:focus {
+    color: #101010 !important;
+    background-color: #ffffff;
+}
+.dropdown-item.active, .dropdown-item:active {
+    color: #fff;
+    text-decoration: none;
+    background-color: #5277b4;
+}

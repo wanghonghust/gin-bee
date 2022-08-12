@@ -1,0 +1,17 @@
+server:
+  address: "127.0.0.1"
+  port: "8088"
+  secreteKey: "asd$%^&*asdh&^8asd98&(*()dasdasdasda_()werewrkfgjdg"
+  jwtExpireTime: 1800
+
+database:
+  address: "127.0.0.1"
+  port: "3306"
+  name: "bee"
+  user: "root"
+  password: "123456"
+
+upload:
+  avatar: "./uploads/file/avatar"
+  file: "./uploads/file"
+

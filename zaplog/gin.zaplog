@@ -1,0 +1,37 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /auth/users/create        --> gin-bee/apps/auth.(*Auth).CreateUser-fm (4 handlers)
+[GIN-debug] POST   /auth/login               --> gin-bee/apps/auth.(*Auth).Login-fm (4 handlers)
+[GIN-debug] POST   /auth                     --> gin-bee/apps/auth.(*Auth).Auth-fm (4 handlers)
+[GIN-debug] POST   /auth/userInfo            --> gin-bee/apps/auth.(*Auth).UserInfo-fm (5 handlers)
+[GIN-debug] POST   /auth/user/avatar/edit    --> gin-bee/apps/auth.(*Auth).EditUserAvatar-fm (5 handlers)
+[GIN-debug] POST   /auth/passwd/change       --> gin-bee/apps/auth.(*Auth).ChangePwd-fm (5 handlers)
+[GIN-debug] POST   /auth/users               --> gin-bee/apps/auth.(*Auth).AllUser-fm (5 handlers)
+[GIN-debug] POST   /auth/users/update        --> gin-bee/apps/auth.(*Auth).UpdateUserInfo-fm (5 handlers)
+[GIN-debug] POST   /auth/users/delete        --> gin-bee/apps/auth.(*Auth).DeleteUSer-fm (5 handlers)
+[GIN-debug] GET    /system/file              --> gin-bee/apps/system.(*System).File-fm (4 handlers)
+[GIN-debug] POST   /system/fileupload        --> gin-bee/apps/system.(*System).FileUpload-fm (4 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on 127.0.0.1:8088
+[GIN] 2022/08/12 - 17:59:09 | 200 |            0s |       127.0.0.1 | POST     "/auth"
+[GIN] 2022/08/12 - 17:59:09 | 200 |       790.4µs |       127.0.0.1 | POST     "/auth/users"
+[GIN] 2022/08/12 - 17:59:09 | 304 |       520.5µs |       127.0.0.1 | GET      "/system/file?id=35"
+[GIN] 2022/08/12 - 17:59:09 | 304 |      2.2385ms |       127.0.0.1 | GET      "/system/file?id=39"
+[GIN] 2022/08/12 - 17:59:09 | 304 |      2.2385ms |       127.0.0.1 | GET      "/system/file?id=36"
+[GIN] 2022/08/12 - 17:59:09 | 304 |      2.2385ms |       127.0.0.1 | GET      "/system/file?id=38"
+[GIN] 2022/08/12 - 17:59:10 | 304 |     22.6335ms |       127.0.0.1 | GET      "/system/file?id=37"
+[GIN] 2022/08/12 - 17:59:10 | 304 |     30.7986ms |       127.0.0.1 | GET      "/system/file?id=29"
+[GIN] 2022/08/12 - 17:59:12 | 200 |       173.2µs |       127.0.0.1 | POST     "/auth"
+[GIN] 2022/08/12 - 17:59:12 | 200 |       1.198ms |       127.0.0.1 | POST     "/auth/users"
+[GIN] 2022/08/12 - 17:59:49 | 200 |      1.1422ms |       127.0.0.1 | GET      "/system/file?id=null"
+[GIN] 2022/08/12 - 17:59:49 | 401 |            0s |       127.0.0.1 | POST     "/auth"
+[GIN] 2022/08/12 - 17:59:49 | 401 |            0s |       127.0.0.1 | POST     "/auth"
+[GIN] 2022/08/12 - 17:59:56 | 200 |            0s |       127.0.0.1 | OPTIONS  "/auth/login"
+[GIN] 2022/08/12 - 17:59:56 | 200 |     52.3853ms |       127.0.0.1 | POST     "/auth/login"
+[GIN] 2022/08/12 - 17:59:56 | 200 |            0s |       127.0.0.1 | POST     "/auth"
+[GIN] 2022/08/12 - 18:00:00 | 200 |       446.7µs |       127.0.0.1 | POST     "/auth"
