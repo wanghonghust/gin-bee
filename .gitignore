@@ -17,6 +17,7 @@
 *.class
 *.dll
 *.exe
+*.exe~
 *.o
 *.so
 # compression file

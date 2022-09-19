@@ -1,0 +1,1044 @@
+definitions:
+  model.API:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      method:
+        type: string
+      path:
+        type: string
+    type: object
+  model.Menu:
+    properties:
+      createdAt:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      label:
+        type: string
+      link:
+        type: string
+      local:
+        type: boolean
+      parentId:
+        type: integer
+      role:
+        items:
+          $ref: '#/definitions/model.Role'
+        type: array
+    type: object
+  model.Permission:
+    properties:
+      createdAt:
+        type: string
+      desc:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      role:
+        items:
+          $ref: '#/definitions/model.Role'
+        type: array
+      type:
+        type: string
+    type: object
+  model.Role:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      menu:
+        items:
+          $ref: '#/definitions/model.Menu'
+        type: array
+      name:
+        type: string
+      permission:
+        items:
+          $ref: '#/definitions/model.Permission'
+        type: array
+      user:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+    type: object
+  model.User:
+    properties:
+      avatar:
+        type: integer
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      nickname:
+        type: string
+      password:
+        type: string
+      role:
+        items:
+          $ref: '#/definitions/model.Role'
+        type: array
+      state:
+        description: 状态，禁用和启用
+        type: boolean
+      username:
+        type: string
+    type: object
+  request.AddParam:
+    properties:
+      TZone:
+        type: string
+      desc:
+        type: string
+      name:
+        type: string
+      time:
+        type: string
+      type:
+        type: integer
+    type: object
+  request.AddPermissionParam:
+    properties:
+      desc:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  request.AddRoleParam:
+    properties:
+      menu:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+      permission:
+        items:
+          type: integer
+        type: array
+    type: object
+  request.DeletePermissionParam:
+    properties:
+      id:
+        items:
+          type: integer
+        type: array
+    type: object
+  request.DeleteRoleParam:
+    properties:
+      id:
+        items:
+          type: integer
+        type: array
+    type: object
+  request.EditPermissionParam:
+    properties:
+      desc:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  request.EditRoleParam:
+    properties:
+      id:
+        type: integer
+      menu:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+      permission:
+        items:
+          type: integer
+        type: array
+    type: object
+  request.MenuAddParam:
+    properties:
+      icon:
+        type: string
+      label:
+        type: string
+      link:
+        type: string
+      local:
+        type: boolean
+      parentId:
+        type: integer
+      permissionSign:
+        type: string
+    type: object
+  request.MenuEditParam:
+    properties:
+      icon:
+        type: string
+      id:
+        description: 必传参数
+        type: integer
+      label:
+        type: string
+      link:
+        type: string
+      local:
+        type: boolean
+      parentId:
+        type: integer
+      permissionSign:
+        type: string
+    type: object
+  request.QrCodeReq:
+    properties:
+      size:
+        type: integer
+      url:
+        type: string
+    type: object
+  response.APIInfos:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.API'
+        type: array
+    type: object
+  response.Log:
+    properties:
+      Body:
+        type: string
+      RemoteIP:
+        type: string
+      createdAt:
+        type: string
+      fullPath:
+        type: string
+      id:
+        type: integer
+      method:
+        type: string
+      response:
+        type: string
+      responseTime:
+        type: number
+      status:
+        type: string
+      userId:
+        type: integer
+    type: object
+  response.LogResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/response.Log'
+        type: array
+    type: object
+  response.MenuResponse:
+    properties:
+      menus:
+        items:
+          $ref: '#/definitions/response.TreeMenu'
+        type: array
+    type: object
+  response.Response:
+    properties:
+      msg:
+        type: string
+    type: object
+  response.RoleData:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      menu:
+        items:
+          $ref: '#/definitions/response.TreeMenu'
+        type: array
+      menuId:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+      permission:
+        items:
+          $ref: '#/definitions/model.Permission'
+        type: array
+      user:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+    type: object
+  response.RoleResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/response.RoleData'
+        type: array
+    type: object
+  response.SystemInfo:
+    properties:
+      cpuInfo:
+        items: {}
+        type: array
+      cpuPercent:
+        type: number
+      disk:
+        items: {}
+        type: array
+      host:
+        items: {}
+        type: array
+      memInfo:
+        items: {}
+        type: array
+    type: object
+  response.SystemInfoRes:
+    properties:
+      data:
+        $ref: '#/definitions/response.SystemInfo'
+    type: object
+  response.Task:
+    properties:
+      TZone:
+        type: string
+      creator:
+        type: integer
+      desc:
+        type: string
+      name:
+        type: string
+      registerName:
+        type: string
+      result:
+        type: string
+      state:
+        type: string
+      time:
+        type: string
+      type:
+        type: integer
+      uid:
+        type: string
+    type: object
+  response.TaskResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/response.Task'
+        type: array
+    type: object
+  response.TreeMenu:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/response.TreeMenu'
+        type: array
+      createAt:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      label:
+        type: string
+      link:
+        type: string
+      local:
+        type: boolean
+      parentId:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: Bee Admin
+  title: Bee Admin API
+  version: 0.0.1
+paths:
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: 登录验证
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: 登录
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /auth/passwd:
+    put:
+      consumes:
+      - application/json
+      description: 修改用户密码
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /auth/user:
+    delete:
+      consumes:
+      - application/json
+      description: 删除用户
+      parameters:
+      - description: 用户id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    get:
+      consumes:
+      - application/json
+      description: 用户信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    post:
+      consumes:
+      - application/json
+      description: 获取所有用户
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    put:
+      consumes:
+      - application/json
+      description: 编辑用户
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /auth/user/avatar:
+    put:
+      consumes:
+      - application/json
+      description: 编辑用户头像
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /auth/user/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建用户
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /system/api:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有的api详情
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.APIInfos'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /system/file:
+    get:
+      consumes:
+      - application/json
+      description: 下载文件
+      parameters:
+      - description: 文件id
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - image/png
+      - image/gif
+      - image/jpeg
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    post:
+      consumes:
+      - application/json
+      description: 上传文件
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /system/log:
+    get:
+      consumes:
+      - application/json
+      description: 请求日志
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.LogResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /system/menu:
+    delete:
+      consumes:
+      - application/json
+      description: 删除菜单
+      parameters:
+      - description: int valid
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    get:
+      consumes:
+      - application/json
+      description: 获取树形结构菜单
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MenuResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    post:
+      consumes:
+      - application/json
+      description: 新增菜单
+      parameters:
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/request.MenuAddParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    put:
+      consumes:
+      - application/json
+      description: 编辑菜单
+      parameters:
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/request.MenuEditParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /system/perm:
+    delete:
+      consumes:
+      - application/json
+      description: 删除权限
+      parameters:
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/request.DeletePermissionParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    get:
+      consumes:
+      - application/json
+      description: 获取所有权限
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    post:
+      consumes:
+      - application/json
+      description: 新增权限
+      parameters:
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/request.AddPermissionParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    put:
+      consumes:
+      - application/json
+      description: 编辑权限
+      parameters:
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/request.EditPermissionParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /system/role:
+    delete:
+      consumes:
+      - application/json
+      description: 删除角色
+      parameters:
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/request.DeleteRoleParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    get:
+      consumes:
+      - application/json
+      description: 获取所有角色
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.RoleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    post:
+      consumes:
+      - application/json
+      description: 新增角色
+      parameters:
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/request.AddRoleParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    put:
+      consumes:
+      - application/json
+      description: 编辑角色
+      parameters:
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/request.EditRoleParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /tool/async_task:
+    get:
+      consumes:
+      - application/json
+      description: 获取任务列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.TaskResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+    post:
+      consumes:
+      - application/json
+      description: 执行异步任务
+      parameters:
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/request.AddParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /tool/qr-code:
+    post:
+      consumes:
+      - application/json
+      description: 生成二维码
+      parameters:
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/request.QrCodeReq'
+      produces:
+      - image/png
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /tool/system-info:
+    get:
+      consumes:
+      - application/json
+      description: 获取系统信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SystemInfoRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
