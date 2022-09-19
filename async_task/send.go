@@ -21,9 +21,8 @@ func TestSend(server *machinery.Server, task *tasks.Signature) error {
 }
 
 func AsyncTestSend(server *machinery.Server, task *tasks.Signature) error {
-	asyncResult, _ := server.SendTask(task)
-	fmt.Println(asyncResult)
-	return nil
+	_, err := server.SendTask(task)
+	return err
 }
 
 func AsyncChain(server *machinery.Server, task *tasks.Signature) error {

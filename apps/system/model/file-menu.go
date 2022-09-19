@@ -14,10 +14,12 @@ type File struct {
 type Menu struct {
 	apps.Model
 	Label    string `json:"label" gorm:"required;unique;not null;varchar(64);"`
-	Parent   *Menu  `json:"parent" gorm:"foreignKey:ID;references:ParentId"`
+	Parent   *Menu  `json:"-"`
 	ParentId *uint  `json:"parentId"`
 	Link     string `json:"link" gorm:"varchar(256)"`
 	Icon     string `json:"icon" gorm:"varchar(64)"`
+	Role     []Role `json:"role" gorm:"many2many:role_menus;"`
+	Local    bool   `json:"local"`
 }
 
 func init() {

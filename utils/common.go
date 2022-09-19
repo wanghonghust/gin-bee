@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -130,7 +131,7 @@ func AtouiPoint(num string) (res uint) {
 }
 
 func StrTimeFormat(strTime string) string {
-	timeLayout := "2006-01-02T15:04:05.999+08:00"
+	timeLayout := "2006-01-02T15:04:05.99+08:00"
 	loc, _ := time.LoadLocation("Local")
 	theTime, _ := time.ParseInLocation(timeLayout, strTime, loc)
 	fmtLayout := "2006-01-02 15:04:05"
@@ -146,6 +147,46 @@ func StructToMap(obj any) (res map[string]any, err error) {
 	err = json.Unmarshal(marshal, &res)
 	if err != nil {
 		return nil, err
+	}
+	return
+}
+
+func AnyToUintPtr(obj any) (res uint, err error) {
+	switch val := obj.(type) {
+	case uint:
+		res = val
+	case uint8:
+		res = uint(val)
+	case uint16:
+		res = uint(val)
+	case uint32:
+		res = uint(val)
+	case uint64:
+		res = uint(val)
+	case int:
+		res = uint(val)
+	case int8:
+		res = uint(val)
+	case int16:
+		res = uint(val)
+	case int32:
+		res = uint(val)
+	case int64:
+		res = uint(val)
+	case float32:
+		res = uint(val)
+	case float64:
+		res = uint(val)
+	case string:
+		tmp, err1 := strconv.Atoi(val)
+		if err1 != nil {
+			res = 0
+			err = err1
+		}
+		res = uint(tmp)
+	default:
+		res = 0
+		err = errors.New(fmt.Sprintf("Cannot convert type %s to uint", reflect.TypeOf(obj)))
 	}
 	return
 }

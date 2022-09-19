@@ -1,9 +1,11 @@
+# 服务器配置
 server:
   address: "127.0.0.1"
   port: "8088"
   secreteKey: "asd$%^&*asdh&^8asd98&(*()dasdasdasda_()werewrkfgjdg"
-  jwtExpireTime: 1800
+  jwtExpireTime: 86400
 
+# mysql 配置
 database:
   address: "127.0.0.1"
   port: "3306"
@@ -11,7 +13,24 @@ database:
   user: "root"
   password: "123456"
 
+# 文件上传配置
 upload:
   avatar: "./uploads/file/avatar"
   file: "./uploads/file"
 
+# 异步任务配置
+machinery:
+  broker: "redis://121.4.61.20:6379"
+  default_queue: "machinery_tasks"
+  result_backend: "redis://121.4.61.20:6379"
+  results_expire_in: 360000
+  redis:
+    max_idle: 3
+    max_active: 100
+    max_idle_timeout: 300
+    wait: 15
+    read_timeout: 15
+    write_timeout: 15
+    connect_timeout: 15
+    normal_tasks_poll_period: 1000
+    delayed_tasks_poll_period: 500

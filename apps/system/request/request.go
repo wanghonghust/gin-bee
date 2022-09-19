@@ -1,4 +1,4 @@
-package system
+package request
 
 import (
 	"errors"
@@ -6,18 +6,22 @@ import (
 )
 
 type MenuAddParam struct {
-	Label    string `json:"label"`
-	ParentId uint   `json:"parentId"`
-	Link     string `json:"link"`
-	Icon     string `json:"icon"`
+	Label          string  `json:"label"`
+	ParentId       uint    `json:"parentId"`
+	Link           string  `json:"link"`
+	Icon           string  `json:"icon"`
+	PermissionSign *string `json:"permissionSign"`
+	Local          bool    `json:"local"`
 }
 
 type MenuEditParam struct {
-	Id       uint   `json:"id"`
-	Label    string `json:"label"`
-	ParentId uint   `json:"parentId"`
-	Link     string `json:"link"`
-	Icon     string `json:"icon"`
+	Id             uint    `json:"id"` //必传参数
+	Label          string  `json:"label"`
+	ParentId       uint    `json:"parentId"`
+	Link           string  `json:"link"`
+	Icon           string  `json:"icon"`
+	PermissionSign *string `json:"permissionSign"`
+	Local          bool    `json:"local"`
 }
 
 func (m *MenuAddParam) Validator() error {

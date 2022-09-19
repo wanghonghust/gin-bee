@@ -22,7 +22,13 @@ var (
 	secretKey           = config.Cfg.Server.SecretKey
 )
 
-// GenerateToken 生成token字符串
+/*
+GenerateToken
+@Description: 生成token字符串
+@param: userInfo
+@return: string
+@return: error
+*/
 func GenerateToken(userInfo UserInfo) (string, error) {
 	expirationTime := time.Now().Add(tokenExpireDuration)
 	claims := &JwtClaims{
@@ -40,7 +46,13 @@ func GenerateToken(userInfo UserInfo) (string, error) {
 	return token, nil
 }
 
-// ParseToken 解析token字符串
+/*
+ParseToken
+@Description: 解析token字符串
+@param: token
+@return: *JwtClaims
+@return: error
+*/
 func ParseToken(token string) (*JwtClaims, error) {
 	claim := &JwtClaims{}
 	_, err := jwt.ParseWithClaims(token, claim, func(t *jwt.Token) (interface{}, error) {

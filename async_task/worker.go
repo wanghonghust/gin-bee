@@ -2,7 +2,6 @@ package async_task
 
 import (
 	"encoding/json"
-	"fmt"
 	"gin-bee/apps"
 	"gin-bee/apps/tool/model"
 	"gin-bee/zaplog"
@@ -34,8 +33,7 @@ func Worker(server *machinery.Server) error {
 	// Here we inject some custom code for error handling,
 	// start and end of task hooks, useful for metrics for example.
 	errorhandler := func(err error) {
-		zaplog.Logger.Error("I am an error handler:" + err.Error())
-		fmt.Println("这是错误中的UUID:", asyncTask.UUID)
+		zaplog.Logger.Errorf("任务:%s，执行失败，ERROR:%s", asyncTask.UUID, err.Error())
 		// 更新任务信息
 		err1 := updateTaskInfo(backend, asyncTask)
 		if err1 != nil {
@@ -46,11 +44,11 @@ func Worker(server *machinery.Server) error {
 	pretaskhandler := func(signature *tasks.Signature) {
 		// 记录执行的任务
 		asyncTask = signature
-		zaplog.Logger.Info("I am a start of task handler for:"+signature.Name, signature.UUID)
+		//zaplog.Logger.Infof("I am a start of task handler for:"+signature.Name, signature.UUID)
 	}
 
 	posttaskhandler := func(signature *tasks.Signature) {
-		zaplog.Logger.Info("I am an end of task handler for:"+signature.Name, signature.UUID)
+		//zaplog.Logger.Info("I am an end of task handler for:"+signature.Name, signature.UUID)
 		// 更新任务信息
 		err3 := updateTaskInfo(backend, signature)
 		if err3 != nil {

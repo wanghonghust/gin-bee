@@ -6,12 +6,16 @@ import (
 	"gin-bee/apps"
 	system "gin-bee/apps/system/model"
 	"gin-bee/apps/system/request"
+	"gin-bee/middleware"
+	"gin-bee/response"
 	"gin-bee/utils"
 	"gin-bee/zaplog"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -28,17 +32,18 @@ type User struct {
 }
 
 type Users struct {
-	Id []int
+	Id []uint
 }
 
 type Userinfo struct {
-	ID        uint      `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	Username  string    `json:"username" `
-	Nickname  string    `json:"nickname"`
-	Email     string    `json:"email"`
-	Avatar    uint      `json:"avatar"`
-	State     bool      `json:"state"`
+	ID        uint                `json:"id"`
+	CreatedAt time.Time           `json:"createdAt"`
+	Username  string              `json:"username" `
+	Nickname  string              `json:"nickname"`
+	Email     string              `json:"email"`
+	Avatar    uint                `json:"avatar"`
+	State     bool                `json:"state"`
+	Menu      []response.TreeMenu `json:"menu"`
 }
 
 type PwdChange struct {
@@ -48,29 +53,37 @@ type PwdChange struct {
 	ConfPassword string `json:"confPassword"`
 }
 
+// Auth
+// @Summary
+// @Schemes
+// @Description 登录验证
+// @Tags
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /auth [post]
 func (a *Auth) Auth(c *gin.Context) {
-	authorization := c.Request.Header.Get("Authorization")
-	if strings.HasPrefix(authorization, "Bearer ") {
-		resJwt := strings.Split(authorization, " ")
-		token := resJwt[len(resJwt)-1]
-		_, err := utils.ParseToken(token)
-		if err != nil {
-			c.JSONP(http.StatusUnauthorized, gin.H{
-				"code": 2,
-				"msg":  err.Error(),
-			})
-			return
-		}
-	} else {
-		c.JSONP(http.StatusUnauthorized, gin.H{
-			"code": 1,
-			"msg":  "未登录状态！",
-		})
+	_, err := middleware.GetCurrentUser(c)
+	if err != nil {
+		c.JSONP(http.StatusUnauthorized, gin.H{"msg": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"auth": true})
 }
 
+// AllUser
+// @Summary
+// @Schemes
+// @Description 获取所有用户
+// @Tags
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /auth/user [post]
 func (a *Auth) AllUser(c *gin.Context) {
 	// 包含分页
 	paginator := utils.Paginator{}
@@ -112,11 +125,22 @@ func (a *Auth) AllUser(c *gin.Context) {
 
 }
 
+// Login
+// @Summary
+// @Schemes
+// @Description 登录
+// @Tags
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /auth/login [post]
 func (a *Auth) Login(c *gin.Context) {
 	// 用户登录
 	user := User{}
 	userModel := system.User{}
-	err := c.BindJSON(&user)
+	err := c.ShouldBindBodyWith(&user, binding.JSON)
 	if err != nil {
 		zaplog.Logger.Error(err.Error())
 	}
@@ -153,6 +177,17 @@ func (a *Auth) Login(c *gin.Context) {
 
 }
 
+// CreateUser
+// @Summary
+// @Schemes
+// @Description 创建用户
+// @Tags
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /auth/user/create [post]
 func (a *Auth) CreateUser(c *gin.Context) {
 	// 用户注册
 	var param request.CreateUserParam
@@ -201,36 +236,60 @@ func (a *Auth) CreateUser(c *gin.Context) {
 	}
 }
 
-func (a *Auth) RegisterIndex(c *gin.Context) {
-	// 用户注册页面
-	c.HTML(http.StatusOK, "register.html", gin.H{"title": "注册"})
-}
-
-func (a *Auth) loginIndex(c *gin.Context) {
-	// 用户登录页面
-	c.HTML(http.StatusOK, "login.html", gin.H{"title": "登录"})
-}
-
+// UserInfo
+// @Summary
+// @Schemes
+// @Description 用户信息
+// @Tags
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /auth/user [get]
 func (a *Auth) UserInfo(c *gin.Context) {
 	// 用户信息
-	userModel := system.User{}
-	err := c.BindJSON(&userModel)
-	if err != nil {
-		fmt.Println(err)
-	}
-	userModel.Where("id = ?", userModel.ID).First(&userModel)
+	var menus []system.Menu
+	id := c.Query("id")
+	uid, _ := strconv.Atoi(id)
+	userModel := system.User{Model: apps.Model{ID: uint(uid)}}
+	userModel.First(&userModel)
 	byteinfo, _ := json.Marshal(&userModel)
 	userinfo := make(gin.H)
-	err = json.Unmarshal(byteinfo, &userinfo)
+	err := json.Unmarshal(byteinfo, &userinfo)
 	if err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{"msg": "请求错误"})
 		return
 	}
+
+	apps.Db.Joins("left join role_menus on menus.id = role_menus.menu_id ").
+		Joins("left join user_roles on role_menus.role_id = user_roles.role_id").
+		Joins("left join users on user_roles.user_id = users.id").Where("users.id = ?", userModel.ID).Find(&menus)
+
+	treeMenu, err := TreeOfMenus(menus)
+	if err != nil {
+		c.JSONP(http.StatusBadRequest, gin.H{"msg": "查询错误"})
+		return
+	}
+
 	userinfo["createdAt"] = utils.StrTimeFormat(utils.String(userinfo["createdAt"]))
+	userinfo["menu"] = treeMenu
 	delete(userinfo, "file")
 	delete(userinfo, "password")
 	c.JSONP(http.StatusOK, userinfo)
 }
+
+// UpdateUserInfo
+// @Summary
+// @Schemes
+// @Description 编辑用户
+// @Tags
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /auth/user [put]
 func (a *Auth) UpdateUserInfo(c *gin.Context) {
 	queryUser := request.UpdateUserParam{}
 	var bodyMap map[string]any
@@ -277,6 +336,18 @@ func (a *Auth) UpdateUserInfo(c *gin.Context) {
 	}
 	c.JSONP(http.StatusOK, gin.H{"msg": "请求成功"})
 }
+
+// EditUserAvatar
+// @Summary
+// @Schemes
+// @Description 编辑用户头像
+// @Tags
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /auth/user/avatar [put]
 func (a *Auth) EditUserAvatar(c *gin.Context) {
 	// 编辑用户信息
 	var err error
@@ -295,21 +366,58 @@ func (a *Auth) EditUserAvatar(c *gin.Context) {
 	c.JSONP(http.StatusOK, gin.H{"code": 0, "msg": "修改成功"})
 }
 
+// DeleteUSer
+// @Summary
+// @Schemes
+// @Description 删除用户
+// @Tags
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Param id body int true "用户id"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /auth/user [delete]
 func (a *Auth) DeleteUSer(c *gin.Context) {
-	var users Users
-	err := c.BindJSON(&users)
+	var param Users
+	err := c.BindJSON(&param)
 	if err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{"msg": "请求错误"})
 		return
 	}
-	tx := apps.Db.Where("id IN (?)", users.Id).Delete(&system.User{})
-	if tx.Error != nil {
+	users := make([]system.User, len(param.Id))
+	for _, item := range param.Id {
+		users = append(users, system.User{Model: apps.Model{ID: item}})
+	}
+
+	// 开启事务
+	err = apps.Db.Transaction(func(tx *gorm.DB) error {
+		// 删除，彻底删除,并清除关联
+		if err2 := tx.Unscoped().Select(clause.Associations).Delete(&users).Error; err2 != nil {
+			return err2
+		}
+		return nil
+	})
+
+	if err != nil {
+		fmt.Println(err)
 		c.JSONP(http.StatusExpectationFailed, gin.H{"msg": "删除失败"})
 		return
 	}
 	c.JSONP(http.StatusOK, gin.H{"msg": "删除成功"})
 }
 
+// ChangePwd
+// @Summary
+// @Schemes
+// @Description 修改用户密码
+// @Tags
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /auth/passwd [put]
 func (a *Auth) ChangePwd(c *gin.Context) {
 	var user PwdChange
 	var err error
@@ -327,7 +435,7 @@ func (a *Auth) ChangePwd(c *gin.Context) {
 	c.JSONP(http.StatusOK, gin.H{"code": 0, "msg": "修改成功"})
 }
 
-func (c *PwdChange) Validate() (user *system.User, msg string) {
+func (c *PwdChange) Validate() (user system.User, msg string) {
 	msg = ""
 
 	tx := apps.Db.Model(&user).Where("id = ?", c.Id).First(&user)
@@ -335,6 +443,7 @@ func (c *PwdChange) Validate() (user *system.User, msg string) {
 		msg = "用户未找到"
 		return
 	}
+
 	if !utils.PasswordVerify(c.OldPassword, user.Password) {
 		msg = "密码不正确"
 		return
