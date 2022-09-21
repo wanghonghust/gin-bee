@@ -3,7 +3,7 @@ server:
   address: "127.0.0.1"
   port: "8088"
   secreteKey: "asd$%^&*asdh&^8asd98&(*()dasdasdasda_()werewrkfgjdg"
-  jwtExpireTime: 86400
+  jwtExpireTime: 36000
 
 # mysql 配置
 database:
@@ -12,6 +12,12 @@ database:
   name: "bee"
   user: "root"
   password: "123456"
+
+# redis缓存配置
+redis:
+  addr: "121.4.61.20:6379"
+  password: ""
+  db: 1
 
 # 文件上传配置
 upload:
@@ -28,7 +34,7 @@ machinery:
     max_idle: 3
     max_active: 100
     max_idle_timeout: 300
-    wait: 15
+    wait: true
     read_timeout: 15
     write_timeout: 15
     connect_timeout: 15

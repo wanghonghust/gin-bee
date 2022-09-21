@@ -2,6 +2,7 @@ package async_task
 
 import (
 	"encoding/json"
+	"fmt"
 	"gin-bee/apps"
 	"gin-bee/apps/tool/model"
 	"gin-bee/zaplog"
@@ -33,6 +34,7 @@ func Worker(server *machinery.Server) error {
 	// Here we inject some custom code for error handling,
 	// start and end of task hooks, useful for metrics for example.
 	errorhandler := func(err error) {
+		fmt.Println(err)
 		zaplog.Logger.Errorf("任务:%s，执行失败，ERROR:%s", asyncTask.UUID, err.Error())
 		// 更新任务信息
 		err1 := updateTaskInfo(backend, asyncTask)

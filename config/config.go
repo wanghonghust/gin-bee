@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	machineryCfg "github.com/RichardKnop/machinery/v2/config"
+	"github.com/go-redis/redis"
 	"gopkg.in/yaml.v3"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -18,6 +19,7 @@ type Config struct {
 	Database  *Database            `json:"database"`
 	Upload    *Upload              `json:"upload"`
 	Machinery *machineryCfg.Config `json:"machinery"`
+	Redis     *redis.Options       `json:"redis"`
 }
 
 // Server

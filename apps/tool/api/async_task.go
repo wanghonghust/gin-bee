@@ -39,12 +39,12 @@ func (t *TaskController) Create(c *gin.Context) {
 	var param request.AddParam
 	var task model.Task
 	var eta *time.Time
-	user, err := middleware.GetCurrentUser(c)
-	if err != nil {
-		c.JSONP(http.StatusUnauthorized, gin.H{"msg": err.Error()})
+	user, err1 := middleware.GetCurrentUser(c)
+	if err1 != nil {
+		c.JSONP(http.StatusUnauthorized, err1)
 		return
 	}
-	err = c.ShouldBindBodyWith(&param, binding.JSON)
+	err := c.ShouldBindBodyWith(&param, binding.JSON)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "请求参数不正确1"})
 		return

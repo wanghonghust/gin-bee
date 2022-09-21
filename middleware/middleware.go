@@ -15,22 +15,27 @@ import (
 	"strings"
 )
 
+type AuthErr struct {
+	Code int    `json:"code"` // 1000:OK,1001:unauthorized,1002:token expired,1003:cannot parse token,1004:user status is forbidden,1005:not a token string.
+	Msg  string `json:"msg"`
+}
+
 func Autenticate() gin.HandlerFunc {
 	// 权限验证中间件
 	return func(c *gin.Context) {
 		// 登录验证
 		userdata, err := GetCurrentUser(c)
 		if err != nil {
-			c.JSONP(http.StatusUnauthorized, gin.H{"msg": err.Error()})
+			c.JSONP(http.StatusUnauthorized, *err)
 			c.Abort()
 			return
 		}
 		var user system.User
 		user.ID = userdata.Id
 		// 接口权限验证
-		err = PathPermission(c, user)
-		if err != nil {
-			c.JSONP(http.StatusForbidden, gin.H{"msg": err.Error()})
+		err1 := PathPermission(c, user)
+		if err1 != nil {
+			c.JSONP(http.StatusForbidden, gin.H{"msg": err1.Error()})
 			c.Abort()
 			return
 		}
@@ -45,8 +50,9 @@ func CORSMiddleware() gin.HandlerFunc {
 		c.Writer.Header().Add("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE, PATCH")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length,token,Authorization")
-		c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Headers")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Length, X-CSRF-Token, Token,session,X_Requested_With,Accept, Origin, Host, Connection, Accept-Encoding, Accept-Language,DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Pragma")
+		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers,Cache-Control,Content-Language,Content-Type,Expires,Last-Modified,Pragma,FooBar")
+		c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers,Cache-Control,Content-Language,Content-Type,Expires,Last-Modified,Pragma,FooBar")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(http.StatusOK)
@@ -96,11 +102,11 @@ func PathPermission(c *gin.Context, usr system.User) (err error) {
 	return nil
 }
 
-func GetCurrentUser(c *gin.Context) (data *utils.JwtClaims, err error) {
+func GetCurrentUser(c *gin.Context) (data *utils.JwtClaims, err *AuthErr) {
 	// 获取当前用户
 	authorization := c.Request.Header.Get("Authorization")
 	if authorization == "" {
-		err = errors.New("用户未登录")
+		err = &AuthErr{Code: 1001, Msg: "用户未登录"}
 		return nil, err
 	} else if strings.HasPrefix(authorization, "Bearer ") {
 		resJwt := strings.Split(authorization, " ")
@@ -108,17 +114,22 @@ func GetCurrentUser(c *gin.Context) (data *utils.JwtClaims, err error) {
 		data, err1 := utils.ParseToken(token)
 
 		if err1 != nil {
-			err = errors.New("token格式不正确")
+			if strings.Contains(err1.Error(), "token is expired") {
+				err = &AuthErr{Code: 1002, Msg: "token已过期"}
+			} else {
+				err = &AuthErr{Code: 1003, Msg: "无法解析token"}
+			}
+
 			return nil, err
 		}
 
 		if !data.State {
-			err = errors.New("用户已被停用")
+			err = &AuthErr{Code: 1004, Msg: "用户已被停用"}
 			return nil, err
 		}
 		return data, nil
 	} else {
-		err = errors.New("token格式不正确")
+		err = &AuthErr{Code: 1005, Msg: "不是一个正确的token"}
 		return nil, err
 	}
 

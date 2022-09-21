@@ -67,10 +67,10 @@ type PwdChange struct {
 func (a *Auth) Auth(c *gin.Context) {
 	_, err := middleware.GetCurrentUser(c)
 	if err != nil {
-		c.JSONP(http.StatusUnauthorized, gin.H{"msg": err.Error()})
+		c.JSONP(http.StatusUnauthorized, *err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"auth": true})
+	c.JSON(http.StatusOK, gin.H{"code": 1000, "msg": "登录成功"})
 }
 
 // AllUser
