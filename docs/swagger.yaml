@@ -1016,6 +1016,42 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
+  /tool/ssh:
+    get:
+      consumes:
+      - application/json
+      description: shh连接
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      tags:
+      - ""
+  /tool/ssh/config:
+    post:
+      consumes:
+      - application/json
+      description: ssh配置
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      tags:
+      - ""
   /tool/system-info:
     get:
       consumes:

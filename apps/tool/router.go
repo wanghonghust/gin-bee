@@ -19,6 +19,8 @@ func RouterHandler(r *gin.Engine) {
 		tGroup.POST("/async_task", api.CTask.Create)
 
 		tGroup.GET("/async_task", api.CTask.List)
+
+		tGroup.POST("/ssh/config", core.GetSshConfig)
 	}
 
 }

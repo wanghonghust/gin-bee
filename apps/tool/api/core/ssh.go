@@ -3,6 +3,7 @@ package core
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"github.com/mitchellh/go-homedir"
 	"golang.org/x/crypto/ssh"
 	"io/ioutil"
@@ -13,7 +14,8 @@ import (
 )
 
 type SSHConfig struct {
-	Addr     string `json:"addr"`
+	Ip       string `json:"ip"`
+	Port     uint   `json:"port"`
 	User     string `json:"user"`
 	Password string `json:"password"`
 }
@@ -26,7 +28,7 @@ func NewSshClient(scfg SSHConfig) (*ssh.Client, error) {
 		Auth:            []ssh.AuthMethod{ssh.Password(scfg.Password)},
 	}
 
-	c, err := ssh.Dial("tcp", scfg.Addr, config)
+	c, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", scfg.Ip, scfg.Port), config)
 	if err != nil {
 		return nil, err
 	}

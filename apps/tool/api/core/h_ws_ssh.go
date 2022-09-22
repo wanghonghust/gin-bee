@@ -2,7 +2,6 @@ package core
 
 import (
 	"bytes"
-	"fmt"
 	"gin-bee/zaplog"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -12,14 +11,45 @@ import (
 
 var upGrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
-	WriteBufferSize: 1024 * 1024 * 10,
+	WriteBufferSize: 1024 * 1024 * 1024,
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
 }
+var sshCfg = make(chan SSHConfig, 1)
 
+// GetSshConfig
+// @Summary
+// @Schemes
+// @Description ssh配置
+// @Tags
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /tool/ssh/config [post]
+func GetSshConfig(c *gin.Context) {
+	sCfg := SSHConfig{}
+	err := c.Bind(&sCfg)
+	sshCfg <- sCfg
+	if err != nil {
+		c.JSONP(http.StatusBadRequest, gin.H{"msg": "ssh配置错误"})
+	}
+	c.JSONP(http.StatusOK, gin.H{"msg": "配置成功"})
+}
+
+// WsSsh
+// @Summary
+// @Schemes
+// @Description shh连接
+// @Tags
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /tool/ssh [get]
 func WsSsh(c *gin.Context) {
-	sshCfg := SSHConfig{User: "root", Password: "Emergency520", Addr: fmt.Sprintf("%s:%d", "121.4.61.20", 22)}
+	sCfg := <-sshCfg
 	wsConn, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 	if handleError(c, err) {
 		zaplog.Logger.Errorf("ws handdle error:%v", err)
@@ -35,7 +65,7 @@ func WsSsh(c *gin.Context) {
 	if wshandleError(wsConn, err) {
 		return
 	}
-	client, err := NewSshClient(sshCfg)
+	client, err := NewSshClient(sCfg)
 	if wshandleError(wsConn, err) {
 		return
 	}
@@ -56,5 +86,6 @@ func WsSsh(c *gin.Context) {
 	go ssConn.SessionWait(quitChan)
 
 	<-quitChan
+
 	zaplog.Logger.Info("websocket finished")
 }
