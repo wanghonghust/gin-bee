@@ -31,10 +31,10 @@ var sshCfg = make(chan SSHConfig, 1)
 func GetSshConfig(c *gin.Context) {
 	sCfg := SSHConfig{}
 	err := c.Bind(&sCfg)
-	sshCfg <- sCfg
 	if err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{"msg": "ssh配置错误"})
 	}
+	sshCfg <- sCfg
 	c.JSONP(http.StatusOK, gin.H{"msg": "配置成功"})
 }
 
@@ -52,7 +52,6 @@ func WsSsh(c *gin.Context) {
 	sCfg := <-sshCfg
 	wsConn, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 	if handleError(c, err) {
-		zaplog.Logger.Errorf("ws handdle error:%v", err)
 		return
 	}
 	defer wsConn.Close()
