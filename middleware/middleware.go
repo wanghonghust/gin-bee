@@ -32,6 +32,11 @@ func Autenticate() gin.HandlerFunc {
 		}
 		var user system.User
 		user.ID = userdata.Id
+		c.Set("user_id", user.ID)
+		if userdata.IsSuperUser {
+			c.Next()
+			return
+		}
 		// 接口权限验证
 		err1 := PathPermission(c, user)
 		if err1 != nil {
@@ -39,7 +44,7 @@ func Autenticate() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		c.Set("user_id", user.ID)
+
 		c.Next()
 	}
 }

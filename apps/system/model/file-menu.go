@@ -22,20 +22,23 @@ type Menu struct {
 	Local    bool   `json:"local"`
 }
 
-func init() {
+func InitFileMenu() (err error) {
 	file := File{}
 	menu := Menu{}
-	err := file.Migrate()
+	err = file.Migrate()
 	if err != nil {
 		zaplog.Logger.Error(err.Error())
+		return
 	}
 	zaplog.Logger.Info("数据表file迁移成功")
 
 	err = menu.Migrate()
 	if err != nil {
 		zaplog.Logger.Error(err.Error())
+		return
 	}
 	zaplog.Logger.Info("数据表menu迁移成功")
+	return nil
 }
 
 func (f *File) Migrate() error {

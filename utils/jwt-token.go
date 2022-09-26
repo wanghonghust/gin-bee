@@ -7,9 +7,10 @@ import (
 )
 
 type UserInfo struct {
-	Id       uint
-	UserName string
-	State    bool
+	Id          uint
+	UserName    string
+	State       bool
+	IsSuperUser bool
 }
 
 type JwtClaims struct {

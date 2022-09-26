@@ -27,6 +27,9 @@ func (w bodyLogWriter) Write(b []byte) (int, error) {
 func LogMiddleware() gin.HandlerFunc {
 	// 请求日志记录
 	return func(c *gin.Context) {
+		if c.ContentType() == "multipart/form-data" {
+			return
+		}
 		// 拷贝请求体
 		reqBody, _ := ioutil.ReadAll(c.Request.Body)
 		var m map[string]interface{}

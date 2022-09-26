@@ -18,15 +18,15 @@ type Log struct {
 	Status       int     `json:"status" gorm:"type:smallint;not null"`
 }
 
-func init() {
+func InitLog() (err error) {
 	log := Log{}
-	err := log.Migrate()
+	err = log.Migrate()
 	if err != nil {
 		zaplog.Logger.Error("数据表logs迁移失败")
 		return
 	}
 	zaplog.Logger.Info("数据表logs迁移成功")
-
+	return nil
 }
 
 func (l *Log) Migrate() error {

@@ -18,12 +18,13 @@ type API struct {
 	Description string `json:"description" gorm:"type:varchar(64);required;not null"`
 }
 
-func init() {
+func InitAPI() (err error) {
 	var api API
 	var perms []Permission
-	err := api.Migrate()
+	err = api.Migrate()
 	if err != nil {
 		zaplog.Logger.Error(err.Error())
+		return
 	}
 	zaplog.Logger.Info("数据表apis迁移成功")
 	apis, err := getAllApiFromDoc()
@@ -52,7 +53,7 @@ func init() {
 		return
 	}
 	zaplog.Logger.Info("初始化接口权限成功")
-
+	return nil
 }
 
 func (a *API) Migrate() error {

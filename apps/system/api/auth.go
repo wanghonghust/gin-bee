@@ -156,7 +156,7 @@ func (a *Auth) Login(c *gin.Context) {
 	}
 	if utils.PasswordVerify(user.Password, userModel.Password) {
 		// 保存session
-		userInfo := utils.UserInfo{Id: userModel.ID, UserName: userModel.Username, State: userModel.State}
+		userInfo := utils.UserInfo{Id: userModel.ID, UserName: userModel.Username, State: userModel.State, IsSuperUser: userModel.IsSuperUser}
 		token, err := utils.GenerateToken(userInfo)
 		if err != nil {
 			zaplog.Logger.Error(err.Error())
@@ -197,10 +197,11 @@ func (a *Auth) CreateUser(c *gin.Context) {
 		return
 	}
 	queryUser := system.User{
-		Username: param.Username,
-		Password: param.Password,
-		Nickname: param.Nickname,
-		Email:    param.Email,
+		Username:    param.Username,
+		Password:    param.Password,
+		Nickname:    param.Nickname,
+		Email:       param.Email,
+		IsSuperUser: param.IsSuperUser,
 		Role: func(nums []uint) (res []system.Role) {
 			for _, item := range nums {
 				res = append(res, system.Role{Model: apps.Model{
@@ -261,11 +262,13 @@ func (a *Auth) UserInfo(c *gin.Context) {
 		c.JSONP(http.StatusBadRequest, gin.H{"msg": "请求错误"})
 		return
 	}
-
-	apps.Db.Joins("left join role_menus on menus.id = role_menus.menu_id ").
-		Joins("left join user_roles on role_menus.role_id = user_roles.role_id").
-		Joins("left join users on user_roles.user_id = users.id").Where("users.id = ?", userModel.ID).Find(&menus)
-
+	if userModel.IsSuperUser {
+		apps.Db.Find(&menus)
+	} else {
+		apps.Db.Joins("left join role_menus on menus.id = role_menus.menu_id ").
+			Joins("left join user_roles on role_menus.role_id = user_roles.role_id").
+			Joins("left join users on user_roles.user_id = users.id").Where("users.id = ?", userModel.ID).Find(&menus)
+	}
 	treeMenu, err := TreeOfMenus(menus)
 	if err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{"msg": "查询错误"})
@@ -306,6 +309,7 @@ func (a *Auth) UpdateUserInfo(c *gin.Context) {
 	}
 	user.ID = queryUser.ID
 	user.Email = queryUser.Email
+	user.IsSuperUser = queryUser.IsSuperUser
 	user.Nickname = queryUser.Nickname
 	user.Role = func(nums []uint) (res []system.Role) {
 		for _, item := range nums {
@@ -323,7 +327,7 @@ func (a *Auth) UpdateUserInfo(c *gin.Context) {
 			return
 		}
 	} else {
-		apps.Db.Select("nickname", "email").Updates(&user)
+		apps.Db.Select("Nickname", "Email", "IsSuperUser").Updates(&user)
 		err = apps.Db.Model(&user).Association("Role").Replace(user.Role)
 		if err != nil {
 			c.JSONP(http.StatusBadRequest, gin.H{"msg": "更新失败"})

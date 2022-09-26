@@ -13,13 +13,15 @@ type Role struct {
 	Menu       []Menu       `json:"menu" gorm:"many2many:role_menus;"`
 }
 
-func init() {
+func InitRolePerM() (err error) {
 	var role Role
-	err := role.Migrate()
+	err = role.Migrate()
 	if err != nil {
 		zaplog.Logger.Error(err.Error())
+		return
 	}
 	zaplog.Logger.Info("数据表role、permission、role_permissions迁移成功")
+	return nil
 }
 
 func (r *Role) Migrate() error {

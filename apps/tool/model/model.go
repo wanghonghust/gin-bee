@@ -22,15 +22,15 @@ type Task struct {
 	Result       string      `json:"result" gorm:"type:varchar(256);"`
 }
 
-func init() {
+func InitTask() (err error) {
 	task := Task{}
-	err := task.Migrate()
+	err = task.Migrate()
 	if err != nil {
 		zaplog.Logger.Error("数据表tasks迁移失败")
 		return
 	}
 	zaplog.Logger.Info("数据表tasks迁移成功")
-
+	return nil
 }
 
 func (t *Task) Migrate() error {
