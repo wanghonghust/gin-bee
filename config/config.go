@@ -5,7 +5,7 @@ import (
 	machineryCfg "github.com/RichardKnop/machinery/v2/config"
 	"github.com/go-redis/redis"
 	"gopkg.in/yaml.v3"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"os"
 )
@@ -49,8 +49,9 @@ type Upload struct {
 }
 
 func DB(dbCfg Database) (db *gorm.DB, err error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&parseTime=true", dbCfg.User, dbCfg.Password, dbCfg.Address, dbCfg.Port, dbCfg.Name)
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	//dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&parseTime=true", dbCfg.User, dbCfg.Password, dbCfg.Address, dbCfg.Port, dbCfg.Name)
+	//db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(sqlite.Open("dsn.db"), &gorm.Config{})
 	return
 }
 
