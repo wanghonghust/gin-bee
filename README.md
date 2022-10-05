@@ -21,3 +21,5 @@ golang+gin+gorm+mysql/sqlite
     ```shell
    go run main.go server
    ```
+#### 相关链接
+   前端项目地址：https://gitee.com/wang-honghust/vite-ts-bee
