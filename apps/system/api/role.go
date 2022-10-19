@@ -31,7 +31,7 @@ type RoleController struct {
 // @Produce json
 // @Success 200 {object} response.RoleResponse
 // @Failure 400 {object} response.Response
-// @Router /system/role [get]
+// @Router /api/system/role [get]
 func (r *RoleController) Roles(c *gin.Context) {
 	var roles []model.Role
 	var roleData []response.RoleData
@@ -88,7 +88,7 @@ func (r *RoleController) Roles(c *gin.Context) {
 // @Param object body request.AddRoleParam true "请求参数"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /system/role [post]
+// @Router /api/system/role [post]
 func (r *RoleController) AddRole(c *gin.Context) {
 	var role model.Role
 	var param request.AddRoleParam
@@ -111,7 +111,6 @@ func (r *RoleController) AddRole(c *gin.Context) {
 		tmpMenu.Model = apps.Model{ID: item}
 		role.Menu = append(role.Menu, tmpMenu)
 	}
-	fmt.Println(param)
 
 	if err = apps.Db.Create(&role).Error; err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{"msg": err.Error()})
@@ -131,7 +130,7 @@ func (r *RoleController) AddRole(c *gin.Context) {
 // @Param object body request.EditRoleParam true "请求参数"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /system/role [put]
+// @Router /api/system/role [put]
 func (r *RoleController) EditRole(c *gin.Context) {
 	var role model.Role
 	var param request.EditRoleParam
@@ -185,7 +184,7 @@ func (r *RoleController) EditRole(c *gin.Context) {
 // @Param object body request.DeleteRoleParam true "请求参数"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /system/role [delete]
+// @Router /api/system/role [delete]
 func (r *RoleController) DeleteRole(c *gin.Context) {
 	var roles []model.Role
 	var param request.DeleteRoleParam

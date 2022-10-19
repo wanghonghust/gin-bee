@@ -16,7 +16,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth": {
+        "/api/auth": {
             "post": {
                 "security": [
                     {
@@ -49,7 +49,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/login": {
+        "/api/auth/login": {
             "post": {
                 "security": [
                     {
@@ -82,7 +82,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/passwd": {
+        "/api/auth/passwd": {
             "put": {
                 "security": [
                     {
@@ -115,7 +115,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/user": {
+        "/api/auth/user": {
             "get": {
                 "security": [
                     {
@@ -252,7 +252,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/user/avatar": {
+        "/api/auth/user/avatar": {
             "put": {
                 "security": [
                     {
@@ -285,7 +285,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/user/create": {
+        "/api/auth/user/create": {
             "post": {
                 "security": [
                     {
@@ -318,7 +318,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/api": {
+        "/api/system/api": {
             "get": {
                 "security": [
                     {
@@ -351,7 +351,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/file": {
+        "/api/system/file": {
             "get": {
                 "security": [
                     {
@@ -439,7 +439,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/log": {
+        "/api/system/log": {
             "get": {
                 "security": [
                     {
@@ -472,7 +472,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/menu": {
+        "/api/system/menu": {
             "get": {
                 "security": [
                     {
@@ -631,7 +631,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/perm": {
+        "/api/system/perm": {
             "get": {
                 "security": [
                     {
@@ -790,7 +790,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/role": {
+        "/api/system/role": {
             "get": {
                 "security": [
                     {
@@ -949,7 +949,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/tool/async_task": {
+        "/api/tool/async_task": {
             "get": {
                 "security": [
                     {
@@ -1024,7 +1024,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/tool/qr-code": {
+        "/api/tool/qr-code": {
             "post": {
                 "security": [
                     {
@@ -1068,7 +1068,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/tool/ssh": {
+        "/api/tool/ssh": {
             "get": {
                 "description": "shh连接",
                 "consumes": [
@@ -1096,7 +1096,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/tool/ssh/config": {
+        "/api/tool/ssh/config": {
             "post": {
                 "description": "ssh配置",
                 "consumes": [
@@ -1124,7 +1124,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/tool/system-info": {
+        "/api/tool/system-info": {
             "get": {
                 "security": [
                     {
@@ -1283,6 +1283,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "isSuperUser": {
+                    "type": "boolean"
                 },
                 "nickname": {
                     "type": "string"

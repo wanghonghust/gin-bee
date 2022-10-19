@@ -34,7 +34,7 @@ type TaskController struct {
 // @Param object body request.AddParam true "请求参数"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /tool/async_task [post]
+// @Router /api/tool/async_task [post]
 func (t *TaskController) Create(c *gin.Context) {
 	var param request.AddParam
 	var task model.Task
@@ -110,7 +110,7 @@ func (t *TaskController) Create(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.TaskResponse
 // @Failure 400 {object} response.Response
-// @Router /tool/async_task [get]
+// @Router /api/tool/async_task [get]
 func (t *TaskController) List(c *gin.Context) {
 	var asyncTasks []model.Task
 	var res []map[string]any

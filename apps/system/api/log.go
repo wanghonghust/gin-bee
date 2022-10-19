@@ -24,7 +24,7 @@ type LogController struct {
 // @Produce json
 // @Success 200 {object} response.LogResponse
 // @Failure 400 {object} response.Response
-// @Router /system/log [get]
+// @Router /api/system/log [get]
 func (lc *LogController) Logs(c *gin.Context) {
 	var logs []model.Log
 	if err := apps.Db.Find(&logs).Error; err != nil {

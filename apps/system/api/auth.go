@@ -63,7 +63,7 @@ type PwdChange struct {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /auth [post]
+// @Router /api/auth [post]
 func (a *Auth) Auth(c *gin.Context) {
 	_, err := middleware.GetCurrentUser(c)
 	if err != nil {
@@ -83,7 +83,7 @@ func (a *Auth) Auth(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /auth/user [post]
+// @Router /api/auth/user [post]
 func (a *Auth) AllUser(c *gin.Context) {
 	// 包含分页
 	paginator := utils.Paginator{}
@@ -135,7 +135,7 @@ func (a *Auth) AllUser(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /auth/login [post]
+// @Router /api/auth/login [post]
 func (a *Auth) Login(c *gin.Context) {
 	// 用户登录
 	user := User{}
@@ -187,7 +187,7 @@ func (a *Auth) Login(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /auth/user/create [post]
+// @Router /api/auth/user/create [post]
 func (a *Auth) CreateUser(c *gin.Context) {
 	// 用户注册
 	var param request.CreateUserParam
@@ -247,7 +247,7 @@ func (a *Auth) CreateUser(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /auth/user [get]
+// @Router /api/auth/user [get]
 func (a *Auth) UserInfo(c *gin.Context) {
 	// 用户信息
 	var menus []system.Menu
@@ -292,7 +292,7 @@ func (a *Auth) UserInfo(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /auth/user [put]
+// @Router /api/auth/user [put]
 func (a *Auth) UpdateUserInfo(c *gin.Context) {
 	queryUser := request.UpdateUserParam{}
 	var bodyMap map[string]any
@@ -351,7 +351,7 @@ func (a *Auth) UpdateUserInfo(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /auth/user/avatar [put]
+// @Router /api/auth/user/avatar [put]
 func (a *Auth) EditUserAvatar(c *gin.Context) {
 	// 编辑用户信息
 	var err error
@@ -381,7 +381,7 @@ func (a *Auth) EditUserAvatar(c *gin.Context) {
 // @Param id body int true "用户id"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /auth/user [delete]
+// @Router /api/auth/user [delete]
 func (a *Auth) DeleteUSer(c *gin.Context) {
 	var param Users
 	err := c.BindJSON(&param)
@@ -421,7 +421,7 @@ func (a *Auth) DeleteUSer(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /auth/passwd [put]
+// @Router /api/auth/passwd [put]
 func (a *Auth) ChangePwd(c *gin.Context) {
 	var user PwdChange
 	var err error

@@ -81,6 +81,8 @@ definitions:
         type: string
       id:
         type: integer
+      isSuperUser:
+        type: boolean
       nickname:
         type: string
       password:
@@ -370,7 +372,7 @@ info:
   title: Bee Admin API
   version: 0.0.1
 paths:
-  /auth:
+  /api/auth:
     post:
       consumes:
       - application/json
@@ -390,7 +392,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /auth/login:
+  /api/auth/login:
     post:
       consumes:
       - application/json
@@ -410,7 +412,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /auth/passwd:
+  /api/auth/passwd:
     put:
       consumes:
       - application/json
@@ -430,7 +432,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /auth/user:
+  /api/auth/user:
     delete:
       consumes:
       - application/json
@@ -514,7 +516,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /auth/user/avatar:
+  /api/auth/user/avatar:
     put:
       consumes:
       - application/json
@@ -534,7 +536,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /auth/user/create:
+  /api/auth/user/create:
     post:
       consumes:
       - application/json
@@ -554,7 +556,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /system/api:
+  /api/system/api:
     get:
       consumes:
       - application/json
@@ -574,7 +576,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /system/file:
+  /api/system/file:
     get:
       consumes:
       - application/json
@@ -629,7 +631,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /system/log:
+  /api/system/log:
     get:
       consumes:
       - application/json
@@ -649,7 +651,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /system/menu:
+  /api/system/menu:
     delete:
       consumes:
       - application/json
@@ -747,7 +749,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /system/perm:
+  /api/system/perm:
     delete:
       consumes:
       - application/json
@@ -845,7 +847,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /system/role:
+  /api/system/role:
     delete:
       consumes:
       - application/json
@@ -943,7 +945,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /tool/async_task:
+  /api/tool/async_task:
     get:
       consumes:
       - application/json
@@ -989,7 +991,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /tool/qr-code:
+  /api/tool/qr-code:
     post:
       consumes:
       - application/json
@@ -1016,7 +1018,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - ""
-  /tool/ssh:
+  /api/tool/ssh:
     get:
       consumes:
       - application/json
@@ -1034,7 +1036,7 @@ paths:
             $ref: '#/definitions/response.Response'
       tags:
       - ""
-  /tool/ssh/config:
+  /api/tool/ssh/config:
     post:
       consumes:
       - application/json
@@ -1052,7 +1054,7 @@ paths:
             $ref: '#/definitions/response.Response'
       tags:
       - ""
-  /tool/system-info:
+  /api/tool/system-info:
     get:
       consumes:
       - application/json

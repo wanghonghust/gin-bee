@@ -22,7 +22,7 @@ type SystemInterfaceController struct {
 // @Produce json
 // @Success 200 {object} response.APIInfos
 // @Failure 400 {object} response.Response
-// @Router /system/api [get]
+// @Router /api/system/api [get]
 func (sc *SystemInterfaceController) GetApi(c *gin.Context) {
 	var apiInfos response.APIInfos
 	if err := apps.Db.Find(&apiInfos.Data).Error; err != nil {

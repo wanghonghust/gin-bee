@@ -15,7 +15,7 @@ database:
 
 # redis缓存配置
 redis:
-  addr: "***.***.***.***:6379"
+  addr: "121.4.61.20:6379"
   password: ""
   db: 1
 
@@ -26,9 +26,9 @@ upload:
 
 # 异步任务配置
 machinery:
-  broker: "redis://***.***.***.***:6379"
+  broker: "redis://121.4.61.20:6379"
   default_queue: "machinery_tasks"
-  result_backend: "redis://***.***.***.***:6379"
+  result_backend: "redis://121.4.61.20:6379"
   results_expire_in: 360000
   redis:
     max_idle: 3

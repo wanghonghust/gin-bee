@@ -18,6 +18,8 @@ var upGrader = websocket.Upgrader{
 }
 var sshCfg = make(chan SSHConfig, 1)
 
+//var sshRes = make(chan bool)
+
 // GetSshConfig
 // @Summary
 // @Schemes
@@ -27,7 +29,7 @@ var sshCfg = make(chan SSHConfig, 1)
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /tool/ssh/config [post]
+// @Router /api/tool/ssh/config [post]
 func GetSshConfig(c *gin.Context) {
 	sCfg := SSHConfig{}
 	err := c.Bind(&sCfg)
@@ -47,7 +49,7 @@ func GetSshConfig(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /tool/ssh [get]
+// @Router /api/tool/ssh [get]
 func WsSsh(c *gin.Context) {
 	sCfg := <-sshCfg
 	wsConn, err := upGrader.Upgrade(c.Writer, c.Request, nil)
@@ -73,6 +75,7 @@ func WsSsh(c *gin.Context) {
 	if wshandleError(wsConn, err) {
 		return
 	}
+
 	defer ssConn.Close()
 
 	quitChan := make(chan bool, 3)

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RouterHandler(r *gin.Engine) {
+func RouterHandler(r *gin.RouterGroup) {
 	tGroup := r.Group("/tool")
 	tGroup.GET("/ws/:id", core.WsSsh)
 	tGroup.Use(middleware.Autenticate())

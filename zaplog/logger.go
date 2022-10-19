@@ -34,7 +34,7 @@ func NewLoggerEncoderConfig() zapcore.EncoderConfig {
 		MessageKey:     "Msg",
 		StacktraceKey:  "Stack",
 		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    zapcore.CapitalLevelEncoder,
+		EncodeLevel:    zapcore.CapitalColorLevelEncoder,
 		EncodeTime:     zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.000"),
 		EncodeDuration: zapcore.StringDurationEncoder,
 		EncodeCaller:   zapcore.ShortCallerEncoder,

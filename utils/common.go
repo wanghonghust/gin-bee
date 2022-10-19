@@ -190,3 +190,7 @@ func AnyToUintPtr(obj any) (res uint, err error) {
 	}
 	return
 }
+
+func ColorTextWithBG(color int, bg int, str string) string {
+	return fmt.Sprintf("\x1b[%d;%dm%s\x1b[0m", color, bg, str)
+}

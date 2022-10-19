@@ -23,7 +23,7 @@ type QRCodeController struct {
 // @Param object body request.QrCodeReq true "请求参数"
 // @Success 200 {string} string 图片
 // @Failure 400 {object} response.Response
-// @Router /tool/qr-code [post]
+// @Router /api/tool/qr-code [post]
 func (qc QRCodeController) GenerateQRCode(c *gin.Context) {
 	var req request.QrCodeReq
 	err := c.BindJSON(&req)

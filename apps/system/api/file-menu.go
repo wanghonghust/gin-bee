@@ -36,7 +36,7 @@ type System struct {
 // @Param id query int true "文件id" mininum(1) maxinum(100)
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /system/file [get]
+// @Router /api/system/file [get]
 func (s *System) File(c *gin.Context) {
 	id := c.Query("id")
 	_, err := strconv.Atoi(id)
@@ -70,7 +70,7 @@ func (s *System) File(c *gin.Context) {
 // @Param file formData file true "file"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /system/file [post]
+// @Router /api/system/file [post]
 func (s *System) FileUpload(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -113,7 +113,7 @@ func (s *System) FileUpload(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.MenuResponse
 // @Failure 400 {object} response.Response
-// @Router /system/menu [get]
+// @Router /api/system/menu [get]
 func (s *System) Menus(c *gin.Context) {
 	menus, err := getMenu(nil, 0, 0)
 	if err != nil {
@@ -134,7 +134,7 @@ func (s *System) Menus(c *gin.Context) {
 // @Param object body request.MenuAddParam true "请求参数"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /system/menu [post]
+// @Router /api/system/menu [post]
 func (s *System) AddMenu(c *gin.Context) {
 	var param request.MenuAddParam
 	var menu model.Menu
@@ -172,7 +172,7 @@ func (s *System) AddMenu(c *gin.Context) {
 // @Param object body request.MenuEditParam true "请求参数"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /system/menu [put]
+// @Router /api/system/menu [put]
 func (s *System) EditMenu(c *gin.Context) {
 	var param request.MenuEditParam
 	var menu model.Menu
@@ -209,7 +209,7 @@ func (s *System) EditMenu(c *gin.Context) {
 // @Param id body int true "int valid" mininum(1)
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /system/menu [delete]
+// @Router /api/system/menu [delete]
 func (s *System) DeleteMenu(c *gin.Context) {
 	var menu model.Menu
 	err := c.BindJSON(&menu)

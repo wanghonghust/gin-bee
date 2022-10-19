@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RouterHandler(r *gin.Engine) {
+func RouterHandler(r *gin.RouterGroup) {
 	sysGroup := r.Group("/system")
 	sysGroup.GET("/file", api.CSystem.File)
 	sysGroup.GET("/log", api.CLog.Logs)

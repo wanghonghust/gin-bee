@@ -30,7 +30,7 @@ type PermissionController struct {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /system/perm [get]
+// @Router /api/system/perm [get]
 func (pc *PermissionController) Permissions(c *gin.Context) {
 	var perms []model.Permission
 	// 用于时间格式化输出
@@ -77,7 +77,7 @@ func (pc *PermissionController) Permissions(c *gin.Context) {
 // @Param object body request.AddPermissionParam true "请求参数"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /system/perm [post]
+// @Router /api/system/perm [post]
 func (pc *PermissionController) AddPermission(c *gin.Context) {
 	var param request.AddPermissionParam
 	var perm model.Permission
@@ -114,7 +114,7 @@ func (pc *PermissionController) AddPermission(c *gin.Context) {
 // @Param object body request.EditPermissionParam true "请求参数"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /system/perm [put]
+// @Router /api/system/perm [put]
 func (pc *PermissionController) EditPermission(c *gin.Context) {
 	var param request.EditPermissionParam
 	var perm model.Permission
@@ -150,7 +150,7 @@ func (pc *PermissionController) EditPermission(c *gin.Context) {
 // @Param object body request.DeletePermissionParam true "请求参数"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /system/perm [delete]
+// @Router /api/system/perm [delete]
 func (pc *PermissionController) DeletePermission(c *gin.Context) {
 	// 批量删除
 	var param request.DeletePermissionParam

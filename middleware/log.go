@@ -6,6 +6,7 @@ import (
 	"gin-bee/apps"
 	system "gin-bee/apps/system/model"
 	"gin-bee/utils"
+	"gin-bee/utils/constant"
 	"gin-bee/zaplog"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -25,7 +26,32 @@ func (w bodyLogWriter) Write(b []byte) (int, error) {
 }
 
 func LogMiddleware() gin.HandlerFunc {
+
 	// 请求日志记录
+	var methodColorMap = map[string]int{
+		"GET":    constant.BGBLUE,
+		"DELETE": constant.BGRED,
+		"POST":   constant.BGGREEN,
+		"PUT":    constant.BGYELLOW,
+	}
+	var getMethodBg = func(method string) int {
+		if val, ok := methodColorMap[method]; ok {
+			return val
+		} else {
+			return 0
+		}
+	}
+	var getStatusBg = func(status int) int {
+		if 100 <= status && status < 200 {
+			return constant.BGWHITE
+		} else if 200 <= status && status < 300 {
+			return constant.BGGREEN
+		} else if 300 <= status && status < 400 {
+			return constant.BGYELLOW
+		} else {
+			return constant.BGRED
+		}
+	}
 	return func(c *gin.Context) {
 		if c.ContentType() == "multipart/form-data" {
 			return
@@ -61,26 +87,17 @@ func LogMiddleware() gin.HandlerFunc {
 		url := c.Request.URL.String()
 		method := c.Request.Method
 		cost := time.Since(start)
-		userId, ok := c.Get("user_id")
-		if ok != true {
-			c.Abort()
-			return
-		}
-		uid, err := utils.AnyToUintPtr(userId)
-		if err != nil {
-			zaplog.Logger.Errorf("Convert Error:%v", err)
-			c.Abort()
-			return
-		}
+		userId, _ := c.Get("user_id")
+		uid, _ := utils.AnyToUintPtr(userId)
+		zaplog.Logger.Infof("\u001B[%d;37m%-6s\u001B[0m    \u001B[%d;37m%3d\u001B[0m   path:%s    body:%s  time:%v    user_id:%v", getMethodBg(method), method, getStatusBg(c.Writer.Status()), c.Writer.Status(), url, reqBody, cost, userId)
 		// 保存到数据库
 		if method != "GET" {
 			log := system.Log{UserId: &uid, RemoteIP: c.RemoteIP(), ResponseTime: float64(uint(cost.Nanoseconds())) / 1e6, FullPath: c.FullPath(), Method: method, Body: string(reqBody), Response: strBody, Status: c.Writer.Status()}
-			if err = apps.Db.Create(&log).Error; err != nil {
+			if err := apps.Db.Create(&log).Error; err != nil {
 				zaplog.Logger.Error(err)
 				c.Abort()
 				return
 			}
 		}
-		zaplog.Logger.Infof("[GIN] path:%s    method:%s	status:%d   body:%s  time:%v    user_id:%v", url, method, c.Writer.Status(), reqBody, cost, userId)
 	}
 }

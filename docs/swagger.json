@@ -7,7 +7,7 @@
         "version": "0.0.1"
     },
     "paths": {
-        "/auth": {
+        "/api/auth": {
             "post": {
                 "security": [
                     {
@@ -40,7 +40,7 @@
                 }
             }
         },
-        "/auth/login": {
+        "/api/auth/login": {
             "post": {
                 "security": [
                     {
@@ -73,7 +73,7 @@
                 }
             }
         },
-        "/auth/passwd": {
+        "/api/auth/passwd": {
             "put": {
                 "security": [
                     {
@@ -106,7 +106,7 @@
                 }
             }
         },
-        "/auth/user": {
+        "/api/auth/user": {
             "get": {
                 "security": [
                     {
@@ -243,7 +243,7 @@
                 }
             }
         },
-        "/auth/user/avatar": {
+        "/api/auth/user/avatar": {
             "put": {
                 "security": [
                     {
@@ -276,7 +276,7 @@
                 }
             }
         },
-        "/auth/user/create": {
+        "/api/auth/user/create": {
             "post": {
                 "security": [
                     {
@@ -309,7 +309,7 @@
                 }
             }
         },
-        "/system/api": {
+        "/api/system/api": {
             "get": {
                 "security": [
                     {
@@ -342,7 +342,7 @@
                 }
             }
         },
-        "/system/file": {
+        "/api/system/file": {
             "get": {
                 "security": [
                     {
@@ -430,7 +430,7 @@
                 }
             }
         },
-        "/system/log": {
+        "/api/system/log": {
             "get": {
                 "security": [
                     {
@@ -463,7 +463,7 @@
                 }
             }
         },
-        "/system/menu": {
+        "/api/system/menu": {
             "get": {
                 "security": [
                     {
@@ -622,7 +622,7 @@
                 }
             }
         },
-        "/system/perm": {
+        "/api/system/perm": {
             "get": {
                 "security": [
                     {
@@ -781,7 +781,7 @@
                 }
             }
         },
-        "/system/role": {
+        "/api/system/role": {
             "get": {
                 "security": [
                     {
@@ -940,7 +940,7 @@
                 }
             }
         },
-        "/tool/async_task": {
+        "/api/tool/async_task": {
             "get": {
                 "security": [
                     {
@@ -1015,7 +1015,7 @@
                 }
             }
         },
-        "/tool/qr-code": {
+        "/api/tool/qr-code": {
             "post": {
                 "security": [
                     {
@@ -1059,7 +1059,7 @@
                 }
             }
         },
-        "/tool/ssh": {
+        "/api/tool/ssh": {
             "get": {
                 "description": "shh连接",
                 "consumes": [
@@ -1087,7 +1087,7 @@
                 }
             }
         },
-        "/tool/ssh/config": {
+        "/api/tool/ssh/config": {
             "post": {
                 "description": "ssh配置",
                 "consumes": [
@@ -1115,7 +1115,7 @@
                 }
             }
         },
-        "/tool/system-info": {
+        "/api/tool/system-info": {
             "get": {
                 "security": [
                     {
@@ -1274,6 +1274,9 @@
                 },
                 "id": {
                     "type": "integer"
+                },
+                "isSuperUser": {
+                    "type": "boolean"
                 },
                 "nickname": {
                     "type": "string"

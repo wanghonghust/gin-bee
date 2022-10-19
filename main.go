@@ -63,10 +63,13 @@ func startServer() (err error) {
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	//r := gin.Default()
 	r.Use(gin.Recovery(), middleware.CORSMiddleware(), middleware.LogMiddleware())
-	system.RouterHandler(r)
-	tool.RouterHandler(r)
+	//r.Use(middleware.CORSMiddleware())
+	api := r.Group("api/")
+	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	system.RouterHandler(api)
+	tool.RouterHandler(api)
 	err = r.Run(fmt.Sprintf("%s:%s", config.Cfg.Server.Address, config.Cfg.Server.Port))
 	if err != nil {
 		zaplog.Logger.Error(err)

@@ -36,7 +36,7 @@ type Disk struct {
 // @Produce json
 // @Success 200 {object} response.SystemInfoRes
 // @Failure 400 {object} response.Response
-// @Router /tool/system-info [get]
+// @Router /api/tool/system-info [get]
 func (s *SystemController) List(c *gin.Context) {
 	var sysInfo SysInfo
 	cpuInfos, err := cpu.Info()
