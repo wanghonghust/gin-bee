@@ -14,7 +14,7 @@ golang+gin+gorm+mysql/sqlite
    ```
 3. 创建超级用户：
     ```shell
-   gp run main.go createsuperuser
+   go run main.go createsuperuser
    ```
    按提示输入账号密码即可
 4. 运行：
