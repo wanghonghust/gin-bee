@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"gin-bee/zaplog"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"net/http"
 	"strconv"
@@ -37,7 +38,7 @@ func GetSshConfig(c *gin.Context) {
 		c.JSONP(http.StatusBadRequest, gin.H{"msg": "ssh配置错误"})
 	}
 	sshCfg <- sCfg
-	c.JSONP(http.StatusOK, gin.H{"msg": "配置成功"})
+	c.JSONP(http.StatusOK, gin.H{"msg": "配置成功", "session": gin.H{"name": sCfg.Name, "host": sCfg.Host, "port": sCfg.Port, "user": sCfg.User, "sessionId": uuid.New()}})
 }
 
 // WsSsh

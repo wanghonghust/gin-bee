@@ -14,7 +14,8 @@ import (
 )
 
 type SSHConfig struct {
-	Ip       string `json:"ip"`
+	Name     string `json:"name"`
+	Host     string `json:"host"`
 	Port     uint   `json:"port"`
 	User     string `json:"user"`
 	Password string `json:"password"`
@@ -28,7 +29,7 @@ func NewSshClient(scfg SSHConfig) (*ssh.Client, error) {
 		Auth:            []ssh.AuthMethod{ssh.Password(scfg.Password)},
 	}
 
-	c, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", scfg.Ip, scfg.Port), config)
+	c, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", scfg.Host, scfg.Port), config)
 	if err != nil {
 		return nil, err
 	}
