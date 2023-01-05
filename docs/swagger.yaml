@@ -244,10 +244,18 @@ definitions:
     type: object
   response.LogResponse:
     properties:
+      count:
+        type: integer
       data:
         items:
           $ref: '#/definitions/response.Log'
         type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
     type: object
   response.MenuResponse:
     properties:
@@ -636,6 +644,17 @@ paths:
       consumes:
       - application/json
       description: 请求日志
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: pageSize
+        type: integer
       produces:
       - application/json
       responses:
