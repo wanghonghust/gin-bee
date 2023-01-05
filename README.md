@@ -17,7 +17,11 @@ golang+gin+gorm+mysql/sqlite
    go run main.go createsuperuser
    ```
    按提示输入账号密码即可
-4. 运行：
+4. 菜单数据初始化
+   ```shell
+   sqlite3 dsn.db ./sql/bee_menus.sql
+   ```
+5. 运行：
     ```shell
    go run main.go server
    ```
