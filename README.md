@@ -3,7 +3,7 @@
 #### 介绍
 后台管理平台，包含用户管理、角色管理、权限管理,异步任务、菜单管理，以及工具箱等功能。
 #### 演示网站
-[bee](http://121.4.61.20/index)
+[bee](http://blog.pureai.club/)
 #### 软件架构
 软件架构说明:
 golang+gin+gorm+mysql/sqlite
@@ -21,7 +21,7 @@ golang+gin+gorm+mysql/sqlite
    按提示输入账号密码即可
 4. 菜单数据初始化
    ```shell
-   sqlite3 dsn.db < ./sql/bee_menus.sql
+   sqlite3 dsn.db < ./sql/main_menus.sql
    ```
 5. 运行：
     ```shell
