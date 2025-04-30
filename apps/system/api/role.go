@@ -2,12 +2,10 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"gin-bee/apps"
 	"gin-bee/apps/system/model"
 	"gin-bee/apps/system/request"
 	"gin-bee/response"
-	"gin-bee/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -69,10 +67,6 @@ func (r *RoleController) Roles(c *gin.Context) {
 	if err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{"msg": "数据Unmarshal失败"})
 		return
-	}
-	// 时间格式化
-	for index, item := range res {
-		res[index]["createdAt"] = utils.StrTimeFormat(fmt.Sprintf("%v", item["createdAt"]))
 	}
 	c.JSONP(http.StatusOK, gin.H{"msg": "请求成功", "data": res})
 }

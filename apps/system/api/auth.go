@@ -7,6 +7,7 @@ import (
 	system "gin-bee/apps/system/model"
 	"gin-bee/apps/system/request"
 	"gin-bee/middleware"
+	"gin-bee/redis"
 	"gin-bee/response"
 	"gin-bee/utils"
 	"gin-bee/zaplog"
@@ -108,9 +109,6 @@ func (a *Auth) AllUser(c *gin.Context) {
 		c.JSONP(http.StatusBadRequest, gin.H{"msg": "请求错误"})
 		return
 	}
-	for idx, _ := range usersData {
-		usersData[idx]["createdAt"] = utils.StrTimeFormat(fmt.Sprintf("%v", usersData[idx]["createdAt"]))
-	}
 	err = paginator.Init(usersData, paginator.PerPage, uint(count))
 	if err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{"msg": err.Error()})
@@ -202,6 +200,7 @@ func (a *Auth) CreateUser(c *gin.Context) {
 		Nickname:    param.Nickname,
 		Email:       param.Email,
 		IsSuperUser: param.IsSuperUser,
+		Limiter:     param.Limiter,
 		Role: func(nums []uint) (res []system.Role) {
 			for _, item := range nums {
 				res = append(res, system.Role{Model: apps.Model{
@@ -274,8 +273,7 @@ func (a *Auth) UserInfo(c *gin.Context) {
 		c.JSONP(http.StatusBadRequest, gin.H{"msg": "查询错误"})
 		return
 	}
-
-	userinfo["createdAt"] = utils.StrTimeFormat(utils.String(userinfo["createdAt"]))
+	//userinfo["createdAt"] = utils.StrTimeFormat(utils.String(userinfo["createdAt"]))
 	userinfo["menu"] = treeMenu
 	delete(userinfo, "file")
 	delete(userinfo, "password")
@@ -370,6 +368,39 @@ func (a *Auth) EditUserAvatar(c *gin.Context) {
 	c.JSONP(http.StatusOK, gin.H{"code": 0, "msg": "修改成功"})
 }
 
+// EditUserLimiter @Summary
+// @Schemes
+// @Description 修改用户限流设置
+// @Tags
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /api/auth/user/limiter [put]
+func (a *Auth) EditUserLimiter(c *gin.Context) {
+	// 修改用户限流设置
+	var err error
+	var user system.User
+	err = c.BindJSON(&user)
+	if err != nil || user.ID == 0 {
+		c.JSONP(http.StatusBadRequest, gin.H{"msg": "请求错误"})
+		return
+	}
+	tx := apps.Db.Model(&user).Where("id = ?", user.ID).Update("limiter", user.Limiter)
+	if tx.Error != nil {
+		c.JSONP(http.StatusBadRequest, gin.H{"msg": "修改失败"})
+		return
+	}
+	// 限制更改后清除对应的键
+	limitKey := fmt.Sprintf("rate:%d", user.ID)
+	_, err = redis.RedisCli.Ping(c).Result()
+	if err == nil {
+		redis.RedisCli.Del(c, limitKey)
+	}
+	c.JSONP(http.StatusOK, gin.H{"code": 0, "msg": "修改成功"})
+}
+
 // DeleteUSer
 // @Summary
 // @Schemes
@@ -404,7 +435,6 @@ func (a *Auth) DeleteUSer(c *gin.Context) {
 	})
 
 	if err != nil {
-		fmt.Println(err)
 		c.JSONP(http.StatusExpectationFailed, gin.H{"msg": "删除失败"})
 		return
 	}
@@ -427,7 +457,8 @@ func (a *Auth) ChangePwd(c *gin.Context) {
 	var err error
 	err = c.BindJSON(&user)
 	if err != nil {
-		fmt.Println(err)
+		c.JSONP(http.StatusBadRequest, gin.H{"code": 1, "msg": "请求参数不正确"})
+		return
 	}
 	userModel, msg := user.Validate()
 	hashPwd, _ := utils.Password(user.NewPassword)

@@ -12,6 +12,13 @@ definitions:
       path:
         type: string
     type: object
+  model.Limiter:
+    properties:
+      limit:
+        type: integer
+      "on":
+        type: boolean
+    type: object
   model.Menu:
     properties:
       createdAt:
@@ -83,6 +90,8 @@ definitions:
         type: integer
       isSuperUser:
         type: boolean
+      limiter:
+        $ref: '#/definitions/model.Limiter'
       nickname:
         type: string
       password:
@@ -549,6 +558,26 @@ paths:
       consumes:
       - application/json
       description: 创建用户
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - ""
+  /api/auth/user/limiter:
+    put:
+      consumes:
+      - application/json
+      description: 修改用户限流设置
       produces:
       - application/json
       responses:

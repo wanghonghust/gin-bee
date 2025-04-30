@@ -8,7 +8,6 @@ import (
 	"gin-bee/apps/tool/request"
 	async_task2 "gin-bee/async_task"
 	"gin-bee/middleware"
-	"gin-bee/utils"
 	"github.com/RichardKnop/machinery/v2/tasks"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -46,6 +45,7 @@ func (t *TaskController) Create(c *gin.Context) {
 	}
 	err := c.ShouldBindBodyWith(&param, binding.JSON)
 	if err != nil {
+		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "请求参数不正确1"})
 		return
 	}
@@ -58,7 +58,7 @@ func (t *TaskController) Create(c *gin.Context) {
 	task.Creator = &user.Id
 	task.State = tasks.StatePending
 	task.Uid = fmt.Sprintf("task_%v", uuid.New().String())
-	eta = param.Time
+	eta = (*time.Time)(param.Time)
 	addTask0 := &tasks.Signature{
 		Name: "TestAdd",
 		Args: []tasks.Arg{
@@ -84,8 +84,8 @@ func (t *TaskController) Create(c *gin.Context) {
 	}
 	// 当任务执行时间在创建之前时，任务执行时间为当前时间
 	now := time.Now()
-	if eta.Sub(now) < 0 {
-		task.Time = &now
+	if eta == nil || eta.Sub(now) < 0 {
+		task.Time = (*apps.FmtTime)(&now)
 	}
 	if err = apps.Db.Create(&task).Error; err != nil {
 		if strings.Contains(err.Error(), "Duplicate entry") {
@@ -127,10 +127,6 @@ func (t *TaskController) List(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "数据反解析失败"})
 		return
-	}
-	for _, item := range res {
-		item["createdAt"] = utils.StrTimeFormat(item["createdAt"].(string))
-		item["time"] = utils.StrTimeFormat(item["time"].(string))
 	}
 	c.JSON(http.StatusOK, gin.H{"data": res})
 }

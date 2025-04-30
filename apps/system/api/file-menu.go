@@ -7,15 +7,16 @@ import (
 	"gin-bee/apps/system/request"
 	"gin-bee/config"
 	"gin-bee/response"
+	"net/http"
+	"os"
+	"path"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"net/http"
-	"os"
-	"path"
-	"strconv"
 )
 
 var (
@@ -39,7 +40,7 @@ type System struct {
 // @Router /api/system/file [get]
 func (s *System) File(c *gin.Context) {
 	id := c.Query("id")
-	_, err := strconv.Atoi(id)
+	parsedId, err := strconv.Atoi(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": "请求参数不正确",
@@ -47,7 +48,7 @@ func (s *System) File(c *gin.Context) {
 		return
 	}
 	file := model.File{}
-	file.Where("id = ?", id).First(&file)
+	file.Where("id = ?", parsedId).First(&file)
 	if file.Path != "" {
 		c.File(file.Path)
 	} else {
@@ -261,7 +262,7 @@ func getMenu(pid *uint, page int, pageSize int) ([]response.TreeMenu, error) {
 			Link:     menu.Link,
 			Icon:     menu.Icon,
 			ParentId: menu.ParentId,
-			CreateAt: menu.CreatedAt.Format("2006-01-02 15:04:05"),
+			CreateAt: menu.CreatedAt.ToString(),
 			Children: child,
 		}
 		treeMenu = append(treeMenu, node)
@@ -309,7 +310,7 @@ func getTreeMenu(pid *uint, ids []uint) ([]response.TreeMenu, error) {
 			Link:     menu.Link,
 			Icon:     menu.Icon,
 			ParentId: menu.ParentId,
-			CreateAt: menu.CreatedAt.Format("2006-01-02 15:04:05"),
+			CreateAt: menu.CreatedAt.ToString(),
 			Children: child,
 		}
 		treeMenu = append(treeMenu, node)

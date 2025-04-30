@@ -318,6 +318,39 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/auth/user/limiter": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "修改用户限流设置",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    ""
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/system/api": {
             "get": {
                 "security": [
@@ -1195,6 +1228,17 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Limiter": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "on": {
+                    "type": "boolean"
+                }
+            }
+        },
         "model.Menu": {
             "type": "object",
             "properties": {
@@ -1302,6 +1346,9 @@ const docTemplate = `{
                 },
                 "isSuperUser": {
                     "type": "boolean"
+                },
+                "limiter": {
+                    "$ref": "#/definitions/model.Limiter"
                 },
                 "nickname": {
                     "type": "string"

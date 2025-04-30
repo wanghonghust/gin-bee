@@ -6,7 +6,6 @@ import (
 	"gin-bee/apps"
 	"gin-bee/apps/system/model"
 	"gin-bee/apps/system/request"
-	"gin-bee/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"gorm.io/gorm/clause"
@@ -58,7 +57,6 @@ func (pc *PermissionController) Permissions(c *gin.Context) {
 			pid = uint(item["id"].(float64))
 			break
 		}
-		res[index]["createdAt"] = utils.StrTimeFormat(fmt.Sprintf("%v", item["createdAt"]))
 		// 检查权限是否被引用
 		apps.Db.Table("role_permissions").Where("permission_id = ?", pid).Count(&count)
 		res[index]["deleteAble"] = count == 0

@@ -1,18 +1,21 @@
 package middleware
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"gin-bee/apps"
 	system "gin-bee/apps/system/model"
+	"gin-bee/redis"
+	"gin-bee/response"
 	"gin-bee/utils"
-	"gin-bee/zaplog"
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"gorm.io/gorm"
 	"net/http"
 	"strings"
+	"time"
+
+	"github.com/asaskevich/govalidator"
+	"github.com/gin-gonic/gin"
+	goredis "github.com/go-redis/redis/v8"
+	"gorm.io/gorm"
 )
 
 type AuthErr struct {
@@ -67,23 +70,30 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
-func AccessLogMiddleware() gin.HandlerFunc {
+func AccessLimitMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//zaplog.Logger.Info(c.Request.RemoteAddr)
-
-		if c.Request.Method == "POST" {
-			var body map[string]any
-			err := c.ShouldBindBodyWith(&body, binding.JSON)
-			if err != nil {
-				c.Next()
+		data, _ := GetCurrentUser(c)
+		if data == nil {
+			// 匿名用户放行
+			return
+		}
+		limitKey := fmt.Sprintf("rate:%d", data.Id)
+		if data.Limiter.On {
+			_, err := redis.RedisCli.Get(c, limitKey).Result()
+			// 键值不存在，初始值设为1。
+			if err == goredis.Nil {
+				redis.RedisCli.Set(c, limitKey, 1, time.Hour*24)
+			} else { // 键值存在则加1
+				redis.RedisCli.Incr(c, limitKey)
 			}
-			marshal, err := json.Marshal(body)
-			if err != nil {
-				fmt.Println(err)
+			count, err := govalidator.ToInt(redis.RedisCli.Get(c, limitKey).Val())
+			if err == nil && count > int64(data.Limiter.Limit) {
+				c.JSONP(http.StatusNotAcceptable, response.LimitError{
+					Msg: fmt.Sprintf("访问次数限制上限为：%d！", 1000),
+				})
+				c.Abort()
+				return
 			}
-			zaplog.Logger.Info(string(marshal))
-			zaplog.Logger.Info(c.RemoteIP())
-			zaplog.Logger.Info(c.Request.Method)
 		}
 		c.Next()
 	}
@@ -127,12 +137,21 @@ func GetCurrentUser(c *gin.Context) (data *utils.JwtClaims, err *AuthErr) {
 
 			return nil, err
 		}
+		var user system.User
+		if err := apps.Db.Where("id = ?", data.Id).Find(&user).Error; err != nil {
+			return nil, &AuthErr{Code: 1006, Msg: err.Error()}
+		}
+		// 从数据库更新数据
+		data.Limiter = utils.Limiter{On: user.Limiter.On, Limit: user.Limiter.Limit}
+		data.State = user.State
 
 		if !data.State {
 			err = &AuthErr{Code: 1004, Msg: "用户已被停用"}
 			return nil, err
 		}
+
 		return data, nil
+
 	} else {
 		err = &AuthErr{Code: 1005, Msg: "不是一个正确的token"}
 		return nil, err

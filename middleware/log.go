@@ -8,10 +8,11 @@ import (
 	"gin-bee/utils"
 	"gin-bee/utils/constant"
 	"gin-bee/zaplog"
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type bodyLogWriter struct {
@@ -76,8 +77,7 @@ func LogMiddleware() gin.HandlerFunc {
 		// 将原始的body重新赋值给context
 		c.Request.Body = ioutil.NopCloser(bytes.NewReader(newBody))
 		start := time.Now()
-		var blw bodyLogWriter
-		blw = bodyLogWriter{bodyBuf: bytes.NewBufferString(""), ResponseWriter: c.Writer}
+		blw := bodyLogWriter{bodyBuf: bytes.NewBufferString(""), ResponseWriter: c.Writer}
 		c.Writer = blw
 		c.Next()
 		// 获取响应
@@ -91,7 +91,7 @@ func LogMiddleware() gin.HandlerFunc {
 		uid, _ := utils.AnyToUintPtr(userId)
 		zaplog.Logger.Infof("\u001B[%d;37m%-6s\u001B[0m    \u001B[%d;37m%3d\u001B[0m   path:%s    body:%s  time:%v    user_id:%v", getMethodBg(method), method, getStatusBg(c.Writer.Status()), c.Writer.Status(), url, reqBody, cost, userId)
 		// 保存到数据库
-		if method != "GET" {
+		if method != "GET" && uid > 0 {
 			log := system.Log{UserId: &uid, RemoteIP: c.RemoteIP(), ResponseTime: float64(uint(cost.Nanoseconds())) / 1e6, FullPath: c.FullPath(), Method: method, Body: string(reqBody), Response: strBody, Status: c.Writer.Status()}
 			if err := apps.Db.Create(&log).Error; err != nil {
 				zaplog.Logger.Error(err)

@@ -1,13 +1,14 @@
 package api
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/disk"
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
-	"net/http"
-	"time"
 )
 
 var CSystem = SystemController{}
@@ -85,8 +86,7 @@ func (s *SystemController) List(c *gin.Context) {
 
 	sysInfo.Disk = make([]map[string]any, 0)
 	for _, part := range parts {
-		var tmp map[string]any
-		tmp = make(map[string]any)
+		tmp := make(map[string]any)
 		diskInfo, _ := disk.Usage(part.Mountpoint)
 		tmp["device"] = part.Device
 		tmp["total"] = diskInfo.Total
@@ -94,6 +94,9 @@ func (s *SystemController) List(c *gin.Context) {
 		tmp["free"] = diskInfo.Free
 		tmp["used"] = diskInfo.Used
 		tmp["usedPercent"] = diskInfo.UsedPercent
+		if diskInfo.Total == 0 {
+			continue
+		}
 		sysInfo.Disk = append(sysInfo.Disk, tmp)
 	}
 

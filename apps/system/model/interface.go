@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"gin-bee/apps"
+	"gin-bee/docs"
 	"gin-bee/utils"
 	"gin-bee/zaplog"
-	"gorm.io/gorm/clause"
-	"os"
+	"regexp"
 	"strings"
+
+	"gorm.io/gorm/clause"
 )
 
 type API struct {
@@ -61,13 +63,10 @@ func (a *API) Migrate() error {
 }
 
 func getAllApiFromDoc() (res []API, err error) {
-	jsonPath := "./docs/swagger.json"
 	var swagger utils.SwaggerJson
-	file, err := os.ReadFile(jsonPath)
-	if err != nil {
-		return
-	}
-	err = json.Unmarshal(file, &swagger)
+	r := regexp.MustCompile(`"schemes":.*?,`)
+	str := r.ReplaceAllString(docs.SwaggerInfo.SwaggerTemplate, "")
+	err = json.Unmarshal([]byte(str), &swagger)
 	if err != nil {
 		return nil, err
 	}

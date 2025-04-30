@@ -44,6 +44,7 @@ func RouterHandler(r *gin.RouterGroup) {
 		group.POST("/user/create", api.CAuth.CreateUser)
 		group.GET("/user", api.CAuth.UserInfo)
 		group.PUT("/user/avatar", api.CAuth.EditUserAvatar)
+		group.PUT("/user/limiter", api.CAuth.EditUserLimiter)
 		group.PUT("/passwd", api.CAuth.ChangePwd)
 		group.POST("/user", api.CAuth.AllUser)
 		group.PUT("/user", api.CAuth.UpdateUserInfo)

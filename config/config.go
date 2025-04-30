@@ -1,15 +1,18 @@
 package config
 
 import (
+	"embed"
 	"fmt"
+
 	machineryCfg "github.com/RichardKnop/machinery/v2/config"
 	"github.com/go-redis/redis"
 	"gopkg.in/yaml.v3"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"os"
 )
 
+//go:embed config.yaml
+var f embed.FS
 var Cfg, _ = load()
 
 // Config
@@ -49,16 +52,17 @@ type Upload struct {
 }
 
 func DB(dbCfg Database) (db *gorm.DB, err error) {
-	//dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&parseTime=true", dbCfg.User, dbCfg.Password, dbCfg.Address, dbCfg.Port, dbCfg.Name)
-	//db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	db, err = gorm.Open(sqlite.Open("dsn.db"), &gorm.Config{})
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&parseTime=true", dbCfg.User, dbCfg.Password, dbCfg.Address, dbCfg.Port, dbCfg.Name)
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	// db, err = gorm.Open(sqlite.Open("dsn.db"), &gorm.Config{})
 	return
 }
 
 func load() (cfg Config, err error) {
 	var in []byte
-	basePath, _ := os.Getwd()
-	in, err = os.ReadFile(basePath + "/config/config.yaml")
+	// basePath, _ := os.Getwd()
+	// in, err = f.ReadFile(basePath + "/config/config.yaml")
+	in, err = f.ReadFile("config.yaml")
 
 	if err != nil {
 		fmt.Println(err)

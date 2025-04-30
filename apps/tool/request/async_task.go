@@ -1,11 +1,13 @@
 package request
 
-import "time"
+import (
+	"gin-bee/apps"
+)
 
 type AddParam struct {
-	Name  string     `json:"name"`
-	Time  *time.Time `json:"time"`
-	Type  uint       `json:"type"`
-	TZone string     `json:"TZone" `
-	Desc  string     `json:"desc"`
+	Name  string        `json:"name"`
+	Time  *apps.FmtTime `json:"time"`
+	Type  uint          `json:"type"`
+	TZone string        `json:"TZone" `
+	Desc  string        `json:"desc"`
 }

@@ -15,12 +15,14 @@ import (
 	"gin-bee/middleware"
 	"gin-bee/utils"
 	"gin-bee/zaplog"
+	"os"
+	"os/signal"
+
 	"github.com/gin-gonic/gin"
 	"github.com/howeyc/gopass"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/urfave/cli"
-	"os"
 )
 
 var (
@@ -47,34 +49,40 @@ func main() {
 }
 func startServer() (err error) {
 	// 运行异步任务worker
-	async_task.Ser, err = server.StartServer()
-	defer async_task.Ser.GetBroker().StopConsuming()
-	if err != nil {
-		zaplog.Logger.Error(err)
-		return
-	}
 	go func() {
+		async_task.Ser, err = server.StartServer()
+		if err != nil {
+			zaplog.Logger.Error(err)
+			return
+		}
 		err := async_task.Worker(async_task.Ser)
 		if err != nil {
 			zaplog.Logger.Error(err)
 			return
 		}
 	}()
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, os.Kill)
+	go func() {
+		gin.SetMode(gin.ReleaseMode)
+		r := gin.New()
+		//r := gin.Default()
+		r.Use(gin.Recovery(), middleware.CORSMiddleware(), middleware.LogMiddleware(), middleware.AccessLimitMiddleware())
+		//r.Use(middleware.CORSMiddleware())
+		api := r.Group("api/")
+		api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+		system.RouterHandler(api)
+		tool.RouterHandler(api)
+		err = r.Run(fmt.Sprintf("%s:%s", config.Cfg.Server.Address, config.Cfg.Server.Port))
+		if err != nil {
+			zaplog.Logger.Error(err)
+			return
+		}
 
-	gin.SetMode(gin.ReleaseMode)
-	r := gin.New()
-	//r := gin.Default()
-	r.Use(gin.Recovery(), middleware.CORSMiddleware(), middleware.LogMiddleware())
-	//r.Use(middleware.CORSMiddleware())
-	api := r.Group("api/")
-	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	system.RouterHandler(api)
-	tool.RouterHandler(api)
-	err = r.Run(fmt.Sprintf("%s:%s", config.Cfg.Server.Address, config.Cfg.Server.Port))
-	if err != nil {
-		zaplog.Logger.Error(err)
-		return
-	}
+	}()
+
+	<-c
+	fmt.Println("Bee quit gracefully")
 	return nil
 }
 

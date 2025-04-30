@@ -1,12 +1,21 @@
 package zaplog
 
 import (
+	"os"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-var Logger = GetLogger()
+var Logger *zap.SugaredLogger
 
+func init() {
+	_, err := os.Stat("logs")
+	if err != nil {
+		os.Mkdir("logs", 0777)
+	}
+	Logger = GetLogger()
+}
 func GetLogger() *zap.SugaredLogger {
 	lg, _ := NewLoggerConfig().Build()
 	return lg.Sugar()
@@ -18,8 +27,8 @@ func NewLoggerConfig() zap.Config {
 		Development:      true,
 		Encoding:         "console",
 		EncoderConfig:    NewLoggerEncoderConfig(),
-		OutputPaths:      []string{"stdout", "./zaplog/gin.log"},
-		ErrorOutputPaths: []string{"stderr", "./zaplog/zap-error.log"},
+		OutputPaths:      []string{"stdout", "./logs/gin.log"},
+		ErrorOutputPaths: []string{"stderr", "./logs/zap-error.log"},
 	}
 }
 

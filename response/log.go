@@ -1,18 +1,20 @@
 package response
 
-import "time"
+import (
+	"gin-bee/apps"
+)
 
 type Log struct {
-	Id           uint      `json:"id"`
-	CreatedAt    time.Time `json:"createdAt"`
-	UserId       *uint     `json:"userId"`
-	Method       string    `json:"method"`
-	RemoteIP     string    `json:"RemoteIP"`
-	Body         string    `json:"Body"`
-	Response     string    `json:"response"`
-	ResponseTime float64   `json:"responseTime"`
-	FullPath     string    `json:"fullPath"`
-	Status       string    `json:"status"`
+	Id           uint         `json:"id"`
+	CreatedAt    apps.FmtTime `json:"createdAt"`
+	UserId       *uint        `json:"userId"`
+	Method       string       `json:"method"`
+	RemoteIP     string       `json:"RemoteIP"`
+	Body         string       `json:"Body"`
+	Response     string       `json:"response"`
+	ResponseTime float64      `json:"responseTime"`
+	FullPath     string       `json:"fullPath"`
+	Status       string       `json:"status"`
 }
 type LogResponse struct {
 	Page     int   `json:"page"`

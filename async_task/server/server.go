@@ -1,8 +1,11 @@
 package server
 
 import (
+	"fmt"
 	"gin-bee/async_task/task"
 	"gin-bee/config"
+	"strings"
+
 	"github.com/RichardKnop/machinery/v2"
 	redisbackend "github.com/RichardKnop/machinery/v2/backends/redis"
 	redisbroker "github.com/RichardKnop/machinery/v2/brokers/redis"
@@ -11,8 +14,10 @@ import (
 
 func StartServer() (*machinery.Server, error) {
 	cnf := config.Cfg.Machinery
-	broker := redisbroker.NewGR(cnf, []string{"121.4.61.20:6379"}, 0)
-	backend := redisbackend.NewGR(cnf, []string{"121.4.61.20:6379"}, 0)
+	brokerAddr, brokerPwd := GetRedisAddrAndPwd(cnf.Broker)
+	backendAddr, backendPwd := GetRedisAddrAndPwd(cnf.Broker)
+	broker := redisbroker.NewGR(cnf, []string{fmt.Sprintf("%s@%s", brokerPwd, brokerAddr)}, 0)
+	backend := redisbackend.NewGR(cnf, []string{fmt.Sprintf("%s@%s", backendPwd, backendAddr)}, 0)
 	lock := eagerlock.New()
 	server := machinery.NewServer(cnf, broker, backend, lock)
 	// Register tasks
@@ -21,4 +26,17 @@ func StartServer() (*machinery.Server, error) {
 		"UpdateTaskInfo": task.UpdateTaskInfo,
 	}
 	return server, server.RegisterTasks(tasks)
+}
+
+func GetRedisAddrAndPwd(url string) (addr string, passwd string) {
+	redisInfo := strings.FieldsFunc(url, func(r rune) bool {
+		return r == '@' || r == '/'
+	})
+	if len(redisInfo) == 2 {
+		addr = redisInfo[2]
+	} else if len(redisInfo) == 3 {
+		addr = redisInfo[2]
+		passwd = redisInfo[1]
+	}
+	return
 }

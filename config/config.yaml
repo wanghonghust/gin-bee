@@ -1,22 +1,22 @@
 # 服务器配置
 server:
-  address: "127.0.0.1" #服务运行ip
+  address: "0.0.0.0" #服务运行ip
   port: "8088"  #服务运行端口
   secreteKey: "asd$%^&*asdh&^8asd98&(*()dasdasdasda_()werewrkfgjdg" #密钥
   jwtExpireTime: 36000 #token过期时间
 
 # mysql 配置
 database:
-  address: "127.0.0.1"
+  address: "10.80.1.66"
   port: "3306"
   name: "bee"
   user: "root"
-  password: "**********"
+  password: "Aa123456!"
 
 # redis缓存配置
 redis:
-  addr: "121.4.61.20:6379"
-  password: ""
+  addr: "10.80.1.66:6379"
+  password: "Aa123456!"
   db: 1
 
 # 文件上传配置
@@ -26,9 +26,9 @@ upload:
 
 # 异步任务配置
 machinery:
-  broker: "redis://121.4.61.20:6379"
+  broker: "redis://Aa123456!@10.80.1.66:6379"
   default_queue: "machinery_tasks"
-  result_backend: "redis://121.4.61.20:6379"
+  result_backend: "redis://Aa123456!@10.80.1.66:6379"
   results_expire_in: 360000
   redis:
     max_idle: 3

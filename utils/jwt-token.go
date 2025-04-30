@@ -6,11 +6,17 @@ import (
 	"time"
 )
 
+type Limiter struct {
+	On    bool `json:"on"`
+	Limit uint `json:"limit"`
+}
+
 type UserInfo struct {
 	Id          uint
 	UserName    string
 	State       bool
 	IsSuperUser bool
+	Limiter     Limiter
 }
 
 type JwtClaims struct {

@@ -1,27 +1,50 @@
 package model
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"gin-bee/apps"
 	"gin-bee/zaplog"
 	"gorm.io/gorm"
 )
 
+type Limiter struct {
+	On    bool `json:"on"`
+	Limit uint `json:"limit"`
+}
+
+// Value 存储数据的时候转换为字符串
+func (l Limiter) Value() (driver.Value, error) {
+	return json.Marshal(l)
+}
+
+// Scan 读取数据的时候转换为json
+func (l *Limiter) Scan(value interface{}) error {
+	return json.Unmarshal(value.([]byte), &l)
+}
+
 type User struct {
 	apps.Model
-	Username    string `json:"username" gorm:"type:varchar(64);unique;required;not null"`
-	Password    string `json:"password" gorm:"type:varchar(256);required;not null;"`
-	Nickname    string `json:"nickname" gorm:"type:varchar(64);"`
-	Email       string `json:"email" gorm:"type:varchar(64)"`
-	Avatar      *uint  `json:"avatar" gorm:"default null"`
-	File        File   `json:"-" gorm:"foreignKey:Avatar;association_foreignkey:ID"`
-	State       bool   `json:"state" gorm:"default:true;not null;"` //状态，禁用和启用
-	IsSuperUser bool   `json:"isSuperUser" gorm:"default:false;not null;"`
-	Role        []Role `json:"role" gorm:"many2many:user_roles;" binding:"-"`
+	Username    string  `json:"username" gorm:"type:varchar(64);unique;required;not null"`
+	Password    string  `json:"password" gorm:"type:varchar(256);required;not null;"`
+	Nickname    string  `json:"nickname" gorm:"type:varchar(64);"`
+	Email       string  `json:"email" gorm:"type:varchar(64)"`
+	Avatar      *uint   `json:"avatar" gorm:"default null"`
+	File        File    `json:"-" gorm:"foreignKey:Avatar;association_foreignkey:ID"`
+	State       bool    `json:"state" gorm:"default:true;not null;"` //状态，禁用和启用
+	IsSuperUser bool    `json:"isSuperUser" gorm:"default:false;not null;"`
+	Role        []Role  `json:"role" gorm:"many2many:user_roles;" binding:"-"`
+	Limiter     Limiter `json:"limiter" gorm:"type:json;"`
 }
 
 func InitUser() (err error) {
 	defer func() {
-		zaplog.Logger.Info("数据表user迁移成功")
+		if err == nil {
+			zaplog.Logger.Info("数据表user迁移成功")
+		} else {
+			zaplog.Logger.Error("数据表user迁移失败")
+		}
+
 	}()
 	user := User{}
 	err = user.Migrate()
