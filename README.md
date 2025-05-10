@@ -3,7 +3,7 @@
 #### 介绍
 后台管理平台，包含用户管理、角色管理、权限管理,异步任务、菜单管理，以及工具箱等功能。
 #### 演示网站
-[bee](http://121.4.61.20/index)
+[bee](https://bee-front-beta.vercel.app/)
 #### 软件架构
 软件架构说明:
 golang+gin+gorm+mysql/sqlite

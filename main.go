@@ -47,7 +47,7 @@ func init() {
 func main() {
 	setCommand()
 }
-func startServer() (err error) {
+func startServer(useTls bool) (err error) {
 	// 运行异步任务worker
 	go func() {
 		async_task.Ser, err = server.StartServer()
@@ -73,7 +73,11 @@ func startServer() (err error) {
 		api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 		system.RouterHandler(api)
 		tool.RouterHandler(api)
-		err = r.Run(fmt.Sprintf("%s:%s", config.Cfg.Server.Address, config.Cfg.Server.Port))
+		if useTls {
+			err = r.RunTLS(fmt.Sprintf("%s:%s", config.Cfg.Server.Address, config.Cfg.Server.Port), config.Cfg.Server.SslCertificate, config.Cfg.Server.SslCertificateKey)
+		} else {
+			err = r.Run(fmt.Sprintf("%s:%s", config.Cfg.Server.Address, config.Cfg.Server.Port))
+		}
 		if err != nil {
 			zaplog.Logger.Error(err)
 			return
@@ -132,7 +136,17 @@ func setCommand() {
 			Name:  "server",
 			Usage: "start bee server ",
 			Action: func(c *cli.Context) error {
-				if err := startServer(); err != nil {
+				if err := startServer(false); err != nil {
+					return cli.NewExitError(err.Error(), 1)
+				}
+				return nil
+			},
+		},
+		{
+			Name:  "sslserver",
+			Usage: "start bee sslserver ",
+			Action: func(c *cli.Context) error {
+				if err := startServer(true); err != nil {
 					return cli.NewExitError(err.Error(), 1)
 				}
 				return nil

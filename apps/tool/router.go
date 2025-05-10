@@ -4,13 +4,14 @@ import (
 	"gin-bee/apps/tool/api"
 	"gin-bee/apps/tool/api/core"
 	"gin-bee/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
 func RouterHandler(r *gin.RouterGroup) {
 	tGroup := r.Group("/tool")
 	tGroup.GET("/ws/:id", core.WsSsh)
-	tGroup.Use(middleware.Autenticate())
+	tGroup.Use(middleware.Authenticate())
 	{
 		tGroup.POST("qr-code", api.CQRCodeController.GenerateQRCode)
 

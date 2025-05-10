@@ -3,6 +3,7 @@ package system
 import (
 	"gin-bee/apps/system/api"
 	"gin-bee/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,7 +11,7 @@ func RouterHandler(r *gin.RouterGroup) {
 	sysGroup := r.Group("/system")
 	sysGroup.GET("/file", api.CSystem.File)
 	sysGroup.GET("/log", api.CLog.Logs)
-	sysGroup.Use(middleware.Autenticate())
+	sysGroup.Use(middleware.Authenticate())
 	{
 		sysGroup.POST("/file", api.CSystem.FileUpload)
 
@@ -29,7 +30,7 @@ func RouterHandler(r *gin.RouterGroup) {
 	}
 
 	permGroup := r.Group("/system")
-	permGroup.Use(middleware.Autenticate())
+	permGroup.Use(middleware.Authenticate())
 	{
 		permGroup.GET("/perm", api.CPermission.Permissions)
 		permGroup.POST("/perm", api.CPermission.AddPermission)
@@ -39,7 +40,7 @@ func RouterHandler(r *gin.RouterGroup) {
 	group := r.Group("/auth")
 	group.POST("/login", api.CAuth.Login)
 	group.POST("", api.CAuth.Auth)
-	group.Use(middleware.Autenticate())
+	group.Use(middleware.Authenticate())
 	{
 		group.POST("/user/create", api.CAuth.CreateUser)
 		group.GET("/user", api.CAuth.UserInfo)

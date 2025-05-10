@@ -28,10 +28,12 @@ type Config struct {
 // Server
 // @Description: 服务配置
 type Server struct {
-	Address       string `json:"address" yaml:"address"`
-	Port          string `json:"port" yaml:"port"`
-	SecretKey     string `json:"secretKey" yaml:"secretKey"`
-	JwtExpireTime uint   `json:"jwtExpireTime" yaml:"jwtExpireTime"`
+	Address           string `json:"address" yaml:"address"`
+	Port              string `json:"port" yaml:"port"`
+	SecretKey         string `json:"secretKey" yaml:"secretKey"`
+	JwtExpireTime     uint   `json:"jwtExpireTime" yaml:"jwtExpireTime"`
+	SslCertificate    string `json:"sslCertificate" yaml:"sslCertificate"`
+	SslCertificateKey string `json:"sslCertificateKey" yaml:"sslCertificateKey"`
 }
 
 // Database

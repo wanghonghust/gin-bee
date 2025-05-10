@@ -23,7 +23,7 @@ type AuthErr struct {
 	Msg  string `json:"msg"`
 }
 
-func Autenticate() gin.HandlerFunc {
+func Authenticate() gin.HandlerFunc {
 	// 权限验证中间件
 	return func(c *gin.Context) {
 		// 登录验证
